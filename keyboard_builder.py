@@ -1,6 +1,5 @@
 import math
 import random
-from typing import List
 
 import numpy as np
 
@@ -327,33 +326,12 @@ def initialize():
                 (l0, l1), f = line.strip().split('\t')
                 digrams[keymap[l0], keymap[l1]] = float(f)
 
-    # def initialize_trigrams():
-    #     trigrams = []
-    #     with open('freq-trigram.txt') as fh:
-    #         for line in fh:
-    #             (l0, l1, l2), f = line.strip().split('\t')
-    #             f = float(f)
-    #             if f >= 0.0001:
-    #                 trigrams.append(((keymap[l0], keymap[l1], keymap[l2]), f))
-    #
-    #     for key in range(len(keys)):
-    #         sub_trigrams = []
-    #         sub_frequencies = []
-    #         for trigram, freq in trigrams:
-    #             if key in trigram:
-    #                 sub_trigrams.append(trigram)
-    #                 sub_frequencies.append(freq)
-    #
-    #         trigrams_containing.append(np.array(sub_trigrams))
-    #         trigram_frequency_containing.append(np.array(sub_frequencies))
-
     def initialize_roll_map():
         i = np.tril_indices_from(roll_map)
         roll_map[i] = roll_map.T[i]
 
     initialize_letters()
     initialize_digrams()
-    # initialize_trigrams()
     initialize_roll_map()
 
 
@@ -377,8 +355,6 @@ class Keyboard:
         i2 = -1
         while {key1letter, key2letter} & {'a', 'e', 'u', 'o'}:
             i1 = random.randint(1, len(self.keyboard) - 1)
-            # key1 = self.keyboard[i1]
-            # i2 = random.choice(np.where(neighbors[key1] == 1)[0])
             i2 = random.randint(1, len(self.keyboard) - 1)
             if i1 == i2:
                 i2 = 0
@@ -393,12 +369,9 @@ class Keyboard:
         letter_delta = np.sum(letter_frequency[key] * effort)
 
         # digram
-        digram_delta = 0
-        for i0, k0 in enumerate(key):
-            for i1, k1 in enumerate(key):
-                digram_delta -= roll_map[i0, i1] * digrams[k0, k1]
+        digram_delta = np.sum(roll_map * digrams[key, key])
 
-        self.penalty = letter_delta + digram_delta
+        self.penalty = letter_delta - digram_delta
 
     def score_and_apply_neighbor(self, i1: int, i2: int):
         """
