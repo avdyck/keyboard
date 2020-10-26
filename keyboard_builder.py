@@ -20,123 +20,120 @@ i   n   a   l   d   q   r   e   t   h
 
 keys = [
     # """
-    # 'q',  'w',  'e',  'r',  't',  'y',  'u',  'i',  'o',  'p',
-    #  'a',  's',  'd',  'f',  'g',  'h',  'j',  'k',  'l',  ';',  '"',
-    #     'z',  'x',  'c',  'v',  'b',  'n',  'm',  '<',  '>',  '?'
-    'p',  'l',  'o',  'k',  'q',  'c',  'w',  'u',  's',  'v',
-     'i',  'n',  'a',  'd',  'f',  '.',  'r',  'e',  'h',  't',  'g',
-       'x',  '.',  '.',  'm',  'z',  'j',  'b',  'y',  '.',  '.',
+    'q',  'w',  'e',  'r',  't',  'y',  'u',  'i',  'o',  'p',
+     'a',  's',  'd',  'f',  'g',  'h',  'j',  'k',  'l',  ';',  '"',
+        'z',  'x',  'c',  'v',  'b',  'n',  'm',  '<',  '>',  '?'
+    # 'q',  'y',  'o',  'k',  '.',  'c',  'w',  'u',  'f',  'p',
+    #  'h',  'i',  'a',  't',  'd',  'x',  'r',  'e',  'n',  'b',  '.',
+    #    '.',  '.',  '.',  'j',  'z',  's',  'm',  'l',  'g',  'v',
+    # 'q',  'u',  'o',  'k',  '.',  '.',  'w',  'y',  '.',  'p',
+    #  'h',  'e',  'a',  't',  'd',  'j',  'r',  'i',  'n',  'b',  '.',
+    #    'z',  'x',  'c',  'f',  'v',  's',  'm',  'l',  'g',  '.',
+    # 'y',  'k',  'o',  'w',  'j',  '.',  'p',  'u',  'd',  'f',
+    #  'i',  'r',  'a',  'l',  'b',  'v',  't',  'e',  'n',  's',  'z',
+    #    '.',  '.',  'h',  'g',  '.',  'c',  'm',  '.',  'x',  'q',
+    # 'q',  'd',  'r',  'w',  'b',  'j',  'f',  'u',  'p',  '.',
+    #  'a',  's',  'h',  't',  'g',  'y',  'n',  'e',  'o',  'i',  '.',
+    #    'z',  'x',  'm',  'c',  'v',  'k',  'l',  '.',  '.',  '.',
     # """
 ]
 
 effort = np.array([
-    3.5,  1.5,  1.5,  2.0,  2.5,  3.0,  2.0,  1.5,  1.5,  2.5,
-     1.2,  1.0,  1.0,  1.0,  2.0,  2.0,  1.0,  1.0,  1.0,  1.2,   3.0,
+    3.0,  1.5,  1.5,  2.0,  2.5,  3.0,  2.0,  1.5,  1.5,  2.5,
+     2.0,  1.0,  1.0,  1.0,  2.0,  2.0,  1.0,  1.0,  1.0,  2.0,   3.1,
         4.0,  4.0,  1.5,  1.5,  3.0,  1.5,  1.5,  2.5,  3.0,  3.0,
 ], dtype=float)
 
 keymap = {k: i for i, k in enumerate(keys)}
 
-rows = np.array([
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-    2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-], dtype=int)
-
-cols = np.array([
-    0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
-    0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-], dtype=int)
-
-a = 0
-b = 1
-c = 2
+a = 1.0
+b = 0.6
+c = 0.5
 roll_map = np.array([
     [  # q
         a, c, b, b, b, b, b, b, b, b,
-        0, 0, b, b, b, b, b, b, b, b, b,
-        0, 0, b, b, b, b, b, b, b, b
+        a, a, b, b, b, b, b, b, b, b, b,
+        a, a, b, b, b, b, b, b, b, b
     ], [  # w
         a, a, c, b, b, b, b, b, b, b,
-        b, 0, b, b, b, b, b, b, b, b, b,
-        0, 0, b, b, b, b, b, b, b, b
+        b, a, b, b, b, b, b, b, b, b, b,
+        a, a, b, b, b, b, b, b, b, b
     ], [  # e
         a, a, a, c, b, b, b, b, b, b,
-        b, b, 0, b, b, b, b, b, b, b, b,
-        0, 0, 0, b, b, b, b, b, b, b
+        b, b, a, b, b, b, b, b, b, b, b,
+        a, a, a, b, b, b, b, b, b, b
     ], [  # r
-        a, a, a, a, 0, b, b, b, b, b,
-        b, b, 0, 0, 0, b, b, b, b, b, b,
-        0, 0, 0, 0, 0, b, b, b, b, b
+        a, a, a, a, a, b, b, b, b, b,
+        b, b, a, a, a, b, b, b, b, b, b,
+        a, a, a, a, a, b, b, b, b, b
     ], [  # t
         a, a, a, a, a, b, b, b, b, b,
-        b, b, b, 0, 0, b, b, b, b, b, b,
-        0, 0, 0, 0, 0, b, b, b, b, b
+        b, b, b, a, a, b, b, b, b, b, b,
+        a, a, a, a, a, b, b, b, b, b
     ], [  # y
-        a, a, a, a, a, a, 0, b, b, b,
-        b, b, b, b, b, 0, 0, b, b, b, b,
-        b, b, b, b, b, 0, 0, 0, 0, 0
+        a, a, a, a, a, a, a, b, b, b,
+        b, b, b, b, b, a, a, b, b, b, b,
+        b, b, b, b, b, a, a, a, a, a
     ], [  # u
         a, a, a, a, a, a, a, c, b, b,
-        b, b, b, b, b, 0, 0, b, b, b, b,
-        b, b, b, b, b, 0, 0, 0, 0, b
+        b, b, b, b, b, a, a, b, b, b, b,
+        b, b, b, b, b, a, a, a, a, b
     ], [  # i
         a, a, a, a, a, a, a, a, c, b,
-        b, b, b, b, b, b, b, 0, b, b, b,
-        b, b, b, b, b, b, b, 0, b, b
+        b, b, b, b, b, b, b, a, b, b, b,
+        b, b, b, b, b, b, b, a, b, b
     ], [  # o
         a, a, a, a, a, a, a, a, a, c,
-        b, b, b, b, b, b, b, b, 0, b, 0,
-        b, b, b, b, b, b, b, 0, 0, 0
+        b, b, b, b, b, b, b, b, a, b, a,
+        b, b, b, b, b, b, b, a, a, a
     ], [  # p
         a, a, a, a, a, a, a, a, a, a,
-        b, b, b, b, b, b, b, b, b, 0, 0,
-        b, b, b, b, b, b, b, 0, 0, 0
+        b, b, b, b, b, b, b, b, b, a, a,
+        b, b, b, b, b, b, b, a, a, a
     ], [  # a
         a, a, a, a, a, a, a, a, a, a,
         a, c, b, b, b, b, b, b, b, b, b,
-        0, b, b, b, b, b, b, b, b, b
+        a, b, b, b, b, b, b, b, b, b
     ], [  # s
         a, a, a, a, a, a, a, a, a, a,
         a, a, c, b, b, b, b, b, b, b, b,
-        0, 0, b, b, b, b, b, b, b, b
+        a, a, b, b, b, b, b, b, b, b
     ], [  # d
         a, a, a, a, a, a, a, a, a, a,
         a, a, a, c, b, b, b, b, b, b, b,
-        b, 0, 0, b, b, b, b, b, b, b
+        b, a, a, b, b, b, b, b, b, b
     ], [  # f
         a, a, a, a, a, a, a, a, a, a,
-        a, a, a, a, 0, b, b, b, b, b, b,
-        b, 0, 0, 0, 0, b, b, b, b, b
+        a, a, a, a, a, b, b, b, b, b, b,
+        b, a, a, a, a, b, b, b, b, b
     ], [  # g
         a, a, a, a, a, a, a, a, a, a,
         a, a, a, a, a, b, b, b, b, b, b,
-        b, 0, 0, 0, 0, b, b, b, b, b
+        b, a, a, a, a, b, b, b, b, b
     ], [  # h
         a, a, a, a, a, a, a, a, a, a,
-        a, a, a, a, a, a, 0, b, b, b, b,
-        b, b, b, b, b, 0, 0, 0, 0, b
+        a, a, a, a, a, a, a, b, b, b, b,
+        b, b, b, b, b, a, a, a, a, b
     ], [  # j
         a, a, a, a, a, a, a, a, a, a,
         a, a, a, a, a, a, a, c, b, b, b,
-        b, b, b, b, b, 0, 0, b, b, b
+        b, b, b, b, b, a, a, b, b, b
     ], [  # k
         a, a, a, a, a, a, a, a, a, a,
         a, a, a, a, a, a, a, a, c, b, b,
-        b, b, b, b, b, b, b, 0, b, 0
+        b, b, b, b, b, b, b, a, b, a
     ], [  # l
         a, a, a, a, a, a, a, a, a, a,
         a, a, a, a, a, a, a, a, a, c, b,
-        b, b, b, b, b, b, b, 0, 0, 0
+        b, b, b, b, b, b, b, a, a, a
     ], [  # ;
         a, a, a, a, a, a, a, a, a, a,
-        a, a, a, a, a, a, a, a, a, a, 0,
-        b, b, b, b, b, b, b, b, b, 0
+        a, a, a, a, a, a, a, a, a, a, a,
+        b, b, b, b, b, b, b, b, b, a
     ], [  # '
         a, a, a, a, a, a, a, a, a, a,
         a, a, a, a, a, a, a, a, a, a, a,
-        b, b, b, b, b, b, b, b, 0, 0
+        b, b, b, b, b, b, b, b, a, a
     ], [  # z
         a, a, a, a, a, a, a, a, a, a,
         a, a, a, a, a, a, a, a, a, a, a,
@@ -148,11 +145,11 @@ roll_map = np.array([
     ], [  # c
         a, a, a, a, a, a, a, a, a, a,
         a, a, a, a, a, a, a, a, a, a, a,
-        a, a, a, 0, 0, b, b, b, b, b
+        a, a, a, a, a, b, b, b, b, b
     ], [  # v
         a, a, a, a, a, a, a, a, a, a,
         a, a, a, a, a, a, a, a, a, a, a,
-        a, a, a, a, 0, b, b, b, b, b
+        a, a, a, a, a, b, b, b, b, b
     ], [  # b
         a, a, a, a, a, a, a, a, a, a,
         a, a, a, a, a, a, a, a, a, a, a,
@@ -160,7 +157,7 @@ roll_map = np.array([
     ], [  # n
         a, a, a, a, a, a, a, a, a, a,
         a, a, a, a, a, a, a, a, a, a, a,
-        a, a, a, a, a, a, 0, b, b, b
+        a, a, a, a, a, a, a, b, b, b
     ], [  # m
         a, a, a, a, a, a, a, a, a, a,
         a, a, a, a, a, a, a, a, a, a, a,
@@ -180,136 +177,8 @@ roll_map = np.array([
     ]
 ], dtype=int)
 
-neighbors = np.array([
-    [  # q
-        0, 1, 0, 0, 0, 0, 0, 0, 0, 0,
-        1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-    ], [  # w
-        1, 0, 1, 0, 0, 0, 0, 0, 0, 0,
-        1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-    ], [  # e
-        0, 1, 0, 1, 0, 0, 0, 0, 0, 0,
-        0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-    ], [  # r
-        0, 0, 1, 0, 1, 0, 0, 0, 0, 0,
-        0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-    ], [  # t
-        0, 0, 0, 1, 0, 1, 0, 0, 0, 0,
-        0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-    ], [  # y
-        0, 0, 0, 0, 1, 0, 1, 0, 0, 0,
-        0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-    ], [  # u
-        0, 0, 0, 0, 0, 1, 0, 1, 0, 0,
-        0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-    ], [  # i
-        0, 0, 0, 0, 0, 0, 1, 0, 1, 0,
-        0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-    ], [  # o
-        0, 0, 0, 0, 0, 0, 0, 1, 0, 1,
-        0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-    ], [  # p
-        0, 0, 0, 0, 0, 0, 0, 0, 1, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-    ], [  # 0
-        1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        1, 1, 0, 0, 0, 0, 0, 0, 0, 0
-    ], [  # s
-        1, 1, 1, 0, 0, 0, 0, 0, 0, 0,
-        1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0,
-        1, 1, 1, 0, 0, 0, 0, 0, 0, 0
-    ], [  # d
-        0, 1, 1, 1, 0, 0, 0, 0, 0, 0,
-        0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0,
-        0, 1, 1, 1, 0, 0, 0, 0, 0, 0
-    ], [  # f
-        0, 0, 1, 1, 1, 0, 0, 0, 0, 0,
-        0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0,
-        0, 0, 1, 1, 1, 0, 0, 0, 0, 0
-    ], [  # g
-        0, 0, 0, 1, 1, 1, 0, 0, 0, 0,
-        0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0,
-        0, 0, 0, 1, 1, 1, 0, 0, 0, 0
-    ], [  # h
-        0, 0, 0, 0, 1, 1, 1, 0, 0, 0,
-        0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0,
-        0, 0, 0, 0, 1, 1, 1, 0, 0, 0
-    ], [  # j
-        0, 0, 0, 0, 0, 1, 1, 1, 0, 0,
-        0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0,
-        0, 0, 0, 0, 0, 1, 1, 1, 0, 0
-    ], [  # k
-        0, 0, 0, 0, 0, 0, 1, 1, 1, 0,
-        0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0,
-        0, 0, 0, 0, 0, 0, 1, 1, 1, 0
-    ], [  # l
-        0, 0, 0, 0, 0, 0, 0, 1, 1, 1,
-        0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0,
-        0, 0, 0, 0, 0, 0, 0, 1, 1, 1
-    ], [  # ;
-        0, 0, 0, 0, 0, 0, 0, 0, 1, 1,
-        0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1,
-        0, 0, 0, 0, 0, 0, 0, 0, 1, 1
-    ], [  # '
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 1
-    ], [  # z
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 1, 0, 0, 0, 0, 0, 0, 0, 0
-    ], [  # x
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
-        1, 0, 1, 0, 0, 0, 0, 0, 0, 0
-    ], [  # c
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0,
-        0, 1, 0, 1, 0, 0, 0, 0, 0, 0
-    ], [  # v
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0,
-        0, 0, 1, 0, 1, 0, 0, 0, 0, 0
-    ], [  # 0
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0,
-        0, 0, 0, 1, 0, 1, 0, 0, 0, 0
-    ], [  # n
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0,
-        0, 0, 0, 0, 1, 0, 1, 0, 0, 0
-    ], [  # m
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0,
-        0, 0, 0, 0, 0, 1, 0, 1, 0, 0
-    ], [  # ,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0,
-        0, 0, 0, 0, 0, 0, 1, 0, 1, 0
-    ], [  # .
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0,
-        0, 0, 0, 0, 0, 0, 0, 1, 0, 1
-    ], [  # /
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1,
-        0, 0, 0, 0, 0, 0, 0, 0, 1, 0
-    ]
-], dtype=int)
-
-letter_frequency: np.ndarray = np.zeros(len(keys), dtype=np.float)
-digrams: np.ndarray = np.zeros((len(keys), len(keys)), dtype=float)
+letter_frequency: np.ndarray = np.zeros(len(keys), dtype=float)
+digram_frequency: np.ndarray = np.zeros((len(keys), len(keys)), dtype=float)
 
 
 def initialize():
@@ -324,7 +193,7 @@ def initialize():
         with open('freq-digram.txt') as fh:
             for line in fh:
                 (l0, l1), f = line.strip().split('\t')
-                digrams[keymap[l0], keymap[l1]] = float(f)
+                digram_frequency[keymap[l0], keymap[l1]] = float(f)
 
     def initialize_roll_map():
         i = np.tril_indices_from(roll_map)
@@ -336,11 +205,13 @@ def initialize():
 
 
 class Keyboard:
-    def __init__(self):
-        self.keyboard = np.array(range(len(keys)), dtype=int)
-        self.location = np.array(range(len(keys)), dtype=int)
-        self.penalty = 0.
-        self.calculate_penalties()
+    def __init__(self, other: 'Keyboard' = None):
+        if other:
+            self.keyboard = other.keyboard.copy()
+            self.penalty = other.penalty
+        else:
+            self.keyboard = np.array(range(len(keys)), dtype=int)
+            self.calculate_penalties()
 
     def neighbor(self):
         """
@@ -349,11 +220,11 @@ class Keyboard:
         ...     n0, n1 = kb.neighbor()
         ...     assert n0 != n1
         """
-        key1letter = 'e'
-        key2letter = 'a'
+        key1letter = ''
+        key2letter = ''
         i1 = -1
         i2 = -1
-        while {key1letter, key2letter} & {'a', 'e', 'u', 'o'}:
+        while i1 == -1 or {key1letter, key2letter} & set(''):
             i1 = random.randint(1, len(self.keyboard) - 1)
             i2 = random.randint(1, len(self.keyboard) - 1)
             if i1 == i2:
@@ -365,13 +236,15 @@ class Keyboard:
 
     def calculate_penalties(self):
         # letter
-        key = self.keyboard
-        letter_delta = np.sum(letter_frequency[key] * effort)
+        kb = self.keyboard
+        letter_delta = np.sum(letter_frequency[kb] * effort)
 
         # digram
-        digram_delta = np.sum(roll_map * digrams[key, key])
+        digram_delta = np.sum((effort[None, kb] + effort[kb, None])
+                              * roll_map
+                              * digram_frequency[kb][:, kb])
 
-        self.penalty = letter_delta - digram_delta
+        self.penalty = letter_delta + digram_delta
 
     def score_and_apply_neighbor(self, i1: int, i2: int):
         """
@@ -386,43 +259,32 @@ class Keyboard:
     def apply_neighbor(self, i1: int, i2: int) -> None:
         key1 = self.keyboard[i1]
         key2 = self.keyboard[i2]
-        assert self.location[key1] == i1
-        assert self.location[key2] == i2
-        self.location[key1] = i2
-        self.location[key2] = i1
         self.keyboard[i1] = key2
         self.keyboard[i2] = key1
 
     def optimize(self, iterations: int):
-        ii = jj = 0
         best = self.deepcopy()
         curr = self.deepcopy()
         for i in range(iterations):
             if i % (iterations // 100) == 0:
                 print(end='.')
-            t = math.exp((iterations - i - 1) / (iterations)) - 1
+            t = math.exp((iterations - i - 1) / iterations) - 1
             prev = curr.deepcopy()
             i1, i2 = curr.neighbor()
             curr.score_and_apply_neighbor(i1, i2)
             if curr.penalty < prev.penalty + t:
                 # We're good
-                ii += 1
                 if curr.penalty < best.penalty:
                     best = curr.deepcopy()
             else:
                 # Undo
-                jj += 1
                 curr = prev
 
-        print('\n', ii, jj, curr.penalty, best.penalty)
+        print('\n', curr.penalty, best.penalty)
         return best
 
     def deepcopy(self):
-        result = Keyboard()
-        result.keyboard = self.keyboard.copy()
-        result.location = self.location.copy()
-        result.penalty = self.penalty
-        return result
+        return Keyboard(self)
 
     def __repr__(self):
         """
@@ -460,5 +322,5 @@ if __name__ == '__main__':
 
     kb = Keyboard()
     for i in range(100):
-        kb = kb.optimize(i * 10_000)
+        kb = kb.optimize(i * 100_000)
         print(kb)
