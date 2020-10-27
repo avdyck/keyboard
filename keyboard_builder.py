@@ -15,133 +15,140 @@ digram_only_optimized = [
 ]
 
 trigram_optimized = [
-    'y',  'p',  'o',  'f',  'b',  'x',  'm',  'u',  'w',  'j',
-     'g',  'i',  'a',  't',  'k',  'v',  'n',  'e',  'r',  'c',  '"',
-       ';',  'q',  'd',  's',  'z',  'l',  'h',  '<',  '>',  '?',
+    'q',  'w',  'o',  'b',  'k',  'j',  'm',  'u',  'c',  'z',
+     'v',  'i',  'a',  't',  'g',  'f',  'n',  'e',  'r',  'p',  '"',
+       ';',  'x',  'd',  's',  'y',  'l',  'h',  '<',  '>',  '?',
+]
+
+trigram_alternating = [
+    'q',  'y',  'o',  'u',  'f',  'b',  'm',  'd',  's',  'z',
+     'h',  'i',  'e',  'a',  'j',  'w',  'n',  't',  'g',  'c',  ';',
+       '?',  '<',  '>',  'k',  '"',  'l',  'r',  'p',  'v',  'x',
 ]
 
 keys = trigram_optimized
-fixed_keys = set('"<>?;')
-
 keymap = {k: i for i, k in enumerate(keys)}
 
+fixed_keys = set(keymap[k] for k in '?<>";ioauexqwv')
+
 effort = np.array([
-    2.5, 2.0, 1.5, 2.0, 2.5, 3.0, 2.0, 1.5, 2.0, 2.5,
-    1.8, 1.0, 1.0, 1.0, 2.0, 2.0, 1.0, 1.0, 1.0, 1.8, 3.0,
-    3.0, 3.0, 1.5, 1.5, 3.0, 1.5, 1.5, 3.0, 3.0, 4.0,
+    6.0, 1.6, 1.3, 1.5, 2.0, 2.6, 1.5, 1.3, 1.6, 3.0,
+     1.8, 1.1, 1.0, 1.0, 1.5, 1.5, 1.0, 1.0, 1.1, 1.8, 3.2,
+        6.5, 6.0, 1.2, 1.2, 2.5, 1.2, 1.2, 1.8, 2.2, 3.2,
 ], dtype=float)
 
 digram_effort = np.zeros((len(keys), len(keys)), dtype=float)
 trigram_effort = np.zeros((len(keys), len(keys), len(keys)), dtype=float)
 
 a = 1.0
-b = 0.6
-c = 0.5
+b = 0.8
+c = 0.6
+d = 0.5
 roll_map = np.array([
     [  # q
-        a, c, b, b, b, b, b, b, b, b,
-        a, a, b, b, b, b, b, b, b, b, b,
-        a, a, b, b, b, b, b, b, b, b
+        a, d, b, b, b, c, c, c, c, c,
+        a, a, b, b, b, c, c, c, c, c, c,
+        a, a, b, b, b, c, c, c, c, c
     ], [  # w
-        a, a, c, b, b, b, b, b, b, b,
-        b, a, b, b, b, b, b, b, b, b, b,
-        a, a, b, b, b, b, b, b, b, b
+        a, a, d, b, b, c, c, c, c, c,
+        b, a, b, b, b, c, c, c, c, c, c,
+        a, a, b, b, b, c, c, c, c, c
     ], [  # e
-        a, a, a, c, b, b, b, b, b, b,
-        b, b, a, b, b, b, b, b, b, b, b,
-        a, a, a, b, b, b, b, b, b, b
+        a, a, a, d, b, c, c, c, c, c,
+        b, b, a, b, b, c, c, c, c, c, c,
+        a, a, a, b, b, c, c, c, c, c
     ], [  # r
-        a, a, a, a, a, b, b, b, b, b,
-        b, b, a, a, a, b, b, b, b, b, b,
-        a, a, a, a, a, b, b, b, b, b
+        a, a, a, a, a, c, c, c, c, c,
+        b, b, a, a, a, c, c, c, c, c, c,
+        a, a, a, a, a, c, c, c, c, c
     ], [  # t
-        a, a, a, a, a, b, b, b, b, b,
-        b, b, b, a, a, b, b, b, b, b, b,
-        a, a, a, a, a, b, b, b, b, b
+        a, a, a, a, a, c, c, c, c, c,
+        b, b, b, a, a, c, c, c, c, c, c,
+        a, a, a, a, a, c, c, c, c, c
     ], [  # y
         a, a, a, a, a, a, a, b, b, b,
-        b, b, b, b, b, a, a, b, b, b, b,
-        b, b, b, b, b, a, a, a, a, a
+        c, c, c, c, c, a, a, b, b, b, b,
+        c, c, c, c, c, a, a, a, a, a
     ], [  # u
-        a, a, a, a, a, a, a, c, b, b,
-        b, b, b, b, b, a, a, b, b, b, b,
-        b, b, b, b, b, a, a, a, a, b
+        a, a, a, a, a, a, a, d, b, b,
+        c, c, c, c, c, a, a, b, b, b, b,
+        c, c, c, c, c, a, a, a, a, b
     ], [  # i
-        a, a, a, a, a, a, a, a, c, b,
-        b, b, b, b, b, b, b, a, b, b, b,
-        b, b, b, b, b, b, b, a, b, b
+        a, a, a, a, a, a, a, a, d, b,
+        c, c, c, c, c, b, b, a, b, b, b,
+        c, c, c, c, c, b, b, a, b, b
     ], [  # o
-        a, a, a, a, a, a, a, a, a, c,
-        b, b, b, b, b, b, b, b, a, b, a,
-        b, b, b, b, b, b, b, a, a, a
+        a, a, a, a, a, a, a, a, a, d,
+        c, c, c, c, c, b, b, b, a, b, a,
+        c, c, c, c, c, b, b, a, a, a
     ], [  # p
         a, a, a, a, a, a, a, a, a, a,
-        b, b, b, b, b, b, b, b, b, a, a,
-        b, b, b, b, b, b, b, a, a, a
+        c, c, c, c, c, b, b, b, b, a, a,
+        c, c, c, c, c, b, b, a, a, a
     ], [  # a
         a, a, a, a, a, a, a, a, a, a,
-        a, c, b, b, b, b, b, b, b, b, b,
-        a, b, b, b, b, b, b, b, b, b
+        a, d, b, b, b, c, c, c, c, c, c,
+        a, b, b, b, b, c, c, c, c, c
     ], [  # s
         a, a, a, a, a, a, a, a, a, a,
-        a, a, c, b, b, b, b, b, b, b, b,
-        a, a, b, b, b, b, b, b, b, b
+        a, a, d, b, b, c, c, c, c, c, c,
+        a, a, b, b, b, c, c, c, c, c
     ], [  # d
         a, a, a, a, a, a, a, a, a, a,
-        a, a, a, c, b, b, b, b, b, b, b,
-        b, a, b, b, b, b, b, b, b, b
+        a, a, a, d, b, c, c, c, c, c, c,
+        b, a, b, b, b, c, c, c, c, c
     ], [  # f
         a, a, a, a, a, a, a, a, a, a,
-        a, a, a, a, a, b, b, b, b, b, b,
-        b, a, a, a, a, b, b, b, b, b
+        a, a, a, a, a, c, c, c, c, c, c,
+        b, a, a, a, a, c, c, c, c, c
     ], [  # g
         a, a, a, a, a, a, a, a, a, a,
-        a, a, a, a, a, b, b, b, b, b, b,
-        b, a, a, a, a, b, b, b, b, b
+        a, a, a, a, a, c, c, c, c, c, c,
+        b, a, a, a, a, c, c, c, c, c
     ], [  # h
         a, a, a, a, a, a, a, a, a, a,
         a, a, a, a, a, a, a, b, b, b, b,
-        b, b, b, b, b, a, a, a, a, b
+        c, c, c, c, c, a, a, a, a, b
     ], [  # j
         a, a, a, a, a, a, a, a, a, a,
-        a, a, a, a, a, a, a, c, b, b, b,
-        b, b, b, b, b, a, a, b, b, b
+        a, a, a, a, a, a, a, d, b, b, b,
+        c, c, c, c, c, a, a, b, b, b
     ], [  # k
         a, a, a, a, a, a, a, a, a, a,
-        a, a, a, a, a, a, a, a, c, b, b,
-        b, b, b, b, b, b, b, a, b, a
+        a, a, a, a, a, a, a, a, d, b, b,
+        c, c, c, c, c, b, b, a, b, a
     ], [  # l
         a, a, a, a, a, a, a, a, a, a,
-        a, a, a, a, a, a, a, a, a, c, b,
-        b, b, b, b, b, b, b, a, a, a
+        a, a, a, a, a, a, a, a, a, d, b,
+        c, c, c, c, c, b, b, a, a, a
     ], [  # ;
         a, a, a, a, a, a, a, a, a, a,
         a, a, a, a, a, a, a, a, a, a, a,
-        b, b, b, b, b, b, b, b, b, a
+        c, c, c, c, c, b, b, b, b, a
     ], [  # '
         a, a, a, a, a, a, a, a, a, a,
         a, a, a, a, a, a, a, a, a, a, a,
-        b, b, b, b, b, b, b, b, a, a
+        c, c, c, c, c, b, b, b, a, a
     ], [  # z
         a, a, a, a, a, a, a, a, a, a,
         a, a, a, a, a, a, a, a, a, a, a,
-        a, c, b, b, b, b, b, b, b, b
+        a, d, b, b, b, c, c, c, c, c
     ], [  # x
         a, a, a, a, a, a, a, a, a, a,
         a, a, a, a, a, a, a, a, a, a, a,
-        a, a, c, b, b, b, b, b, b, b
+        a, a, d, b, b, c, c, c, c, c
     ], [  # c
         a, a, a, a, a, a, a, a, a, a,
         a, a, a, a, a, a, a, a, a, a, a,
-        a, a, a, a, a, b, b, b, b, b
+        a, a, a, a, a, c, c, c, c, c
     ], [  # v
         a, a, a, a, a, a, a, a, a, a,
         a, a, a, a, a, a, a, a, a, a, a,
-        a, a, a, a, a, b, b, b, b, b
+        a, a, a, a, a, c, c, c, c, c
     ], [  # b
         a, a, a, a, a, a, a, a, a, a,
         a, a, a, a, a, a, a, a, a, a, a,
-        a, a, a, a, a, b, b, b, b, b
+        a, a, a, a, a, c, c, c, c, c
     ], [  # n
         a, a, a, a, a, a, a, a, a, a,
         a, a, a, a, a, a, a, a, a, a, a,
@@ -149,15 +156,15 @@ roll_map = np.array([
     ], [  # m
         a, a, a, a, a, a, a, a, a, a,
         a, a, a, a, a, a, a, a, a, a, a,
-        a, a, a, a, a, a, a, c, b, b
+        a, a, a, a, a, a, a, d, b, b
     ], [  # ,
         a, a, a, a, a, a, a, a, a, a,
         a, a, a, a, a, a, a, a, a, a, a,
-        a, a, a, a, a, a, a, a, c, b
+        a, a, a, a, a, a, a, a, d, b
     ], [  # .
         a, a, a, a, a, a, a, a, a, a,
         a, a, a, a, a, a, a, a, a, a, a,
-        a, a, a, a, a, a, a, a, a, c
+        a, a, a, a, a, a, a, a, a, d
     ], [  # /
         a, a, a, a, a, a, a, a, a, a,
         a, a, a, a, a, a, a, a, a, a, a,
@@ -222,12 +229,6 @@ def initialize():
                     # Best case scenario: average of digram efforts
                     trigram_effort[i0, i1, i2] = (2 * digram_effort[i0, i1] + 2 * digram_effort[i1, i2] + digram_effort[i0, i2]) / 5
 
-                    if hand[i0] == hand[i1] == hand[i2] and i0 != i2:
-                        horizontal = (cols[i0] < cols[i1] < cols[i2]) or (cols[i0] > cols[i1] > cols[i2])
-                        vertical = (rows[i0] <= rows[i1] <= rows[i2]) or (rows[i0] >= rows[i1] >= rows[i2])
-                        if not horizontal or not vertical:
-                            trigram_effort[i0, i1, i2] *= min(digram_effort[i0, i1] + effort[i2], effort[i0] + digram_effort[i1, i2])
-
     initialize_letters()
     initialize_digrams()
     initialize_trigrams()
@@ -243,6 +244,15 @@ class Keyboard:
         else:
             self.keyboard = np.array(range(len(keys)), dtype=int)
             # np.random.shuffle(self.keyboard)
+
+            i = -1
+            while i < len(self.keyboard) - 1:
+                i += 1
+                k = self.keyboard[i]
+                if i != k and k in fixed_keys:
+                    self.apply_neighbor(i, k)
+                    i = min(i, k)
+
             self.calculate_penalties()
 
     def neighbor(self):
@@ -253,7 +263,7 @@ class Keyboard:
         ...     assert n0 != n1
         """
         global fixed_keys
-        candidates = [i for i, k in enumerate(self.keyboard) if keys[k] not in fixed_keys]
+        candidates = [i for i, k in enumerate(self.keyboard) if k not in fixed_keys]
 
         return np.random.choice(candidates, 2, replace=False)
 
@@ -263,10 +273,10 @@ class Keyboard:
         letter_delta = np.sum(letter_frequency[kb] * effort)
 
         # digram
-        digram_delta = np.sum(digram_effort * digram_frequency[kb][:, kb]) / 2
+        digram_delta = np.sum(digram_effort * digram_frequency[kb][:, kb])
 
         # trigram
-        trigram_delta = np.sum(trigram_effort * trigram_frequency[kb][:, kb][:, :, kb]) / 3
+        trigram_delta = np.sum(trigram_effort * trigram_frequency[kb][:, kb][:, :, kb])
 
         self.penalty = letter_delta + digram_delta + trigram_delta
 
