@@ -2,40 +2,37 @@ import math
 
 import numpy as np
 
-"""
-<   o   l   f   y   q   p   m   u   b
- i   a   n   s   k   v   t   h   e   r   j
-   >   "   d   g   x   w   c   ?   ;   z
-w   m   o   f   >   x   j   u   s   k
- d   n   a   i   b   g   r   e   h   t   v
-   ;   ?   y   p   "   l   c   <   z   q
-f   <   o   q   m   l   b   p   y   u
- i   n   a   s   k   v   t   h   e   r   j
-   >   "   x   d   g   c   w   ?   ;   z
-i   n   a   l   d   q   r   e   t   h
- y   f   o   p   v   x   s   u   b   m   k
-   "   ?   >   c   g   w   j   <   ;   z
-"""
-
-keys = [
-    # """
-    'q',  'w',  'e',  'r',  't',  'y',  'u',  'i',  'o',  'p',
-     'a',  's',  'd',  'f',  'g',  'h',  'j',  'k',  'l',  '.',  '.',
-        'z',  'x',  'c',  'v',  'b',  'n',  'm',  '.',  '.',  '.'
-    # 'y',  'p',  'm',  'k',  'v',  'x',  'w',  'u',  'o',  'b',
-    #  'g',  'i',  't',  's',  'f',  'j',  'n',  'e',  'a',  'c',  '.',
-    #    '.',  '.',  'd',  'h',  'z',  'r',  'l',  '.',  'q',  '.',
-    # """
+qwerty = [
+    'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p',
+     'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', '"',
+        'z', 'x', 'c', 'v', 'b', 'n', 'm', '<', '>', '?'
 ]
-fixed_keys = set('')
 
-effort = np.array([
-    3.0,  1.5,  1.5,  2.0,  2.5,  3.0,  2.0,  1.5,  1.5,  2.5,
-     2.0,  1.0,  1.0,  1.0,  2.0,  2.0,  1.0,  1.0,  1.0,  2.0,   3.1,
-        4.0,  4.0,  1.5,  1.5,  3.0,  1.5,  1.5,  2.5,  3.0,  3.0,
-], dtype=float)
+digram_only_optimized = [
+    'y', 'p', 'm', 'k', 'b', 'z', 'g', 'u', 'o', 'b',
+     'g', 'i', 't', 's', 'f', 'j', 'n', 'e', 'a', 'c', '"',
+        'z', 'x', 'd', 'h', ';', 'r', 'l', '<', '>', '?',
+]
+
+trigram_optimized = [
+    'y',  'p',  'o',  'f',  'b',  'x',  'm',  'u',  'w',  'j',
+     'g',  'i',  'a',  't',  'k',  'v',  'n',  'e',  'r',  'c',  '"',
+       ';',  'q',  'd',  's',  'z',  'l',  'h',  '<',  '>',  '?',
+]
+
+keys = trigram_optimized
+fixed_keys = set('"<>?;')
 
 keymap = {k: i for i, k in enumerate(keys)}
+
+effort = np.array([
+    2.5, 2.0, 1.5, 2.0, 2.5, 3.0, 2.0, 1.5, 2.0, 2.5,
+    1.8, 1.0, 1.0, 1.0, 2.0, 2.0, 1.0, 1.0, 1.0, 1.8, 3.0,
+    3.0, 3.0, 1.5, 1.5, 3.0, 1.5, 1.5, 3.0, 3.0, 4.0,
+], dtype=float)
+
+digram_effort = np.zeros((len(keys), len(keys)), dtype=float)
+trigram_effort = np.zeros((len(keys), len(keys), len(keys)), dtype=float)
 
 a = 1.0
 b = 0.6
@@ -92,7 +89,7 @@ roll_map = np.array([
     ], [  # d
         a, a, a, a, a, a, a, a, a, a,
         a, a, a, c, b, b, b, b, b, b, b,
-        b, a, a, b, b, b, b, b, b, b
+        b, a, b, b, b, b, b, b, b, b
     ], [  # f
         a, a, a, a, a, a, a, a, a, a,
         a, a, a, a, a, b, b, b, b, b, b,
@@ -166,142 +163,14 @@ roll_map = np.array([
         a, a, a, a, a, a, a, a, a, a, a,
         a, a, a, a, a, a, a, a, a, a
     ]
-], dtype=int)
-
-neighbors = np.array([
-    [  # q
-        0, 1, 0, 0, 0, 0, 0, 0, 0, 0,
-        1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-    ], [  # w
-        1, 0, 1, 0, 0, 0, 0, 0, 0, 0,
-        1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-    ], [  # e
-        0, 1, 0, 1, 0, 0, 0, 0, 0, 0,
-        0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-    ], [  # r
-        0, 0, 1, 0, 1, 0, 0, 0, 0, 0,
-        0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-    ], [  # t
-        0, 0, 0, 1, 0, 1, 0, 0, 0, 0,
-        0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-    ], [  # y
-        0, 0, 0, 0, 1, 0, 1, 0, 0, 0,
-        0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-    ], [  # u
-        0, 0, 0, 0, 0, 1, 0, 1, 0, 0,
-        0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-    ], [  # i
-        0, 0, 0, 0, 0, 0, 1, 0, 1, 0,
-        0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-    ], [  # o
-        0, 0, 0, 0, 0, 0, 0, 1, 0, 1,
-        0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-    ], [  # p
-        0, 0, 0, 0, 0, 0, 0, 0, 1, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-    ], [  # 0
-        1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        1, 1, 0, 0, 0, 0, 0, 0, 0, 0
-    ], [  # s
-        1, 1, 1, 0, 0, 0, 0, 0, 0, 0,
-        1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0,
-        1, 1, 1, 0, 0, 0, 0, 0, 0, 0
-    ], [  # d
-        0, 1, 1, 1, 0, 0, 0, 0, 0, 0,
-        0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0,
-        0, 1, 1, 1, 0, 0, 0, 0, 0, 0
-    ], [  # f
-        0, 0, 1, 1, 1, 0, 0, 0, 0, 0,
-        0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0,
-        0, 0, 1, 1, 1, 0, 0, 0, 0, 0
-    ], [  # g
-        0, 0, 0, 1, 1, 1, 0, 0, 0, 0,
-        0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0,
-        0, 0, 0, 1, 1, 1, 0, 0, 0, 0
-    ], [  # h
-        0, 0, 0, 0, 1, 1, 1, 0, 0, 0,
-        0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0,
-        0, 0, 0, 0, 1, 1, 1, 0, 0, 0
-    ], [  # j
-        0, 0, 0, 0, 0, 1, 1, 1, 0, 0,
-        0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0,
-        0, 0, 0, 0, 0, 1, 1, 1, 0, 0
-    ], [  # k
-        0, 0, 0, 0, 0, 0, 1, 1, 1, 0,
-        0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0,
-        0, 0, 0, 0, 0, 0, 1, 1, 1, 0
-    ], [  # l
-        0, 0, 0, 0, 0, 0, 0, 1, 1, 1,
-        0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0,
-        0, 0, 0, 0, 0, 0, 0, 1, 1, 1
-    ], [  # ;
-        0, 0, 0, 0, 0, 0, 0, 0, 1, 1,
-        0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1,
-        0, 0, 0, 0, 0, 0, 0, 0, 1, 1
-    ], [  # '
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 1
-    ], [  # z
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 1, 0, 0, 0, 0, 0, 0, 0, 0
-    ], [  # x
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
-        1, 0, 1, 0, 0, 0, 0, 0, 0, 0
-    ], [  # c
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0,
-        0, 1, 0, 1, 0, 0, 0, 0, 0, 0
-    ], [  # v
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0,
-        0, 0, 1, 0, 1, 0, 0, 0, 0, 0
-    ], [  # 0
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0,
-        0, 0, 0, 1, 0, 1, 0, 0, 0, 0
-    ], [  # n
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0,
-        0, 0, 0, 0, 1, 0, 1, 0, 0, 0
-    ], [  # m
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0,
-        0, 0, 0, 0, 0, 1, 0, 1, 0, 0
-    ], [  # ,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0,
-        0, 0, 0, 0, 0, 0, 1, 0, 1, 0
-    ], [  # .
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0,
-        0, 0, 0, 0, 0, 0, 0, 1, 0, 1
-    ], [  # /
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1,
-        0, 0, 0, 0, 0, 0, 0, 0, 1, 0
-    ]
-], dtype=int)
+], dtype=float)
 
 letter_frequency: np.ndarray = np.zeros(len(keys), dtype=float)
 digram_frequency: np.ndarray = np.zeros((len(keys), len(keys)), dtype=float)
+trigram_frequency: np.ndarray = np.zeros((len(keys), len(keys), len(keys)), dtype=float)
 
 
 def initialize():
-
     def initialize_letters():
         with open('freq-letter.txt') as fh:
             for line in fh:
@@ -314,13 +183,56 @@ def initialize():
                 (l0, l1), f = line.strip().split('\t')
                 digram_frequency[keymap[l0], keymap[l1]] = float(f)
 
+    def initialize_trigrams():
+        with open('freq-trigram.txt') as fh:
+            for line in fh:
+                (l0, l1, l2), f = line.strip().split('\t')
+                trigram_frequency[keymap[l0], keymap[l1], keymap[l2]] = float(f)
+
     def initialize_roll_map():
         i = np.tril_indices_from(roll_map)
         roll_map[i] = roll_map.T[i]
+        for i0 in range(len(keys)):
+            for i1 in range(len(keys)):
+                digram_effort[i0][i1] = roll_map[i0][i1] * (effort[i0] + effort[i1]) / 2
+
+    def initialize_tri_roll_map():
+
+        cols = [
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+        ]
+
+        rows = [
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+            2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+        ]
+
+        hand = [
+            0, 0, 0, 0, 0, 1, 1, 1, 1, 1,
+            0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1,
+            0, 0, 0, 0, 0, 1, 1, 1, 1, 1,
+        ]
+
+        for i0 in range(len(keys)):
+            for i1 in range(len(keys)):
+                for i2 in range(len(keys)):
+                    # Best case scenario: average of digram efforts
+                    trigram_effort[i0, i1, i2] = (2 * digram_effort[i0, i1] + 2 * digram_effort[i1, i2] + digram_effort[i0, i2]) / 5
+
+                    if hand[i0] == hand[i1] == hand[i2] and i0 != i2:
+                        horizontal = (cols[i0] < cols[i1] < cols[i2]) or (cols[i0] > cols[i1] > cols[i2])
+                        vertical = (rows[i0] <= rows[i1] <= rows[i2]) or (rows[i0] >= rows[i1] >= rows[i2])
+                        if not horizontal or not vertical:
+                            trigram_effort[i0, i1, i2] *= min(digram_effort[i0, i1] + effort[i2], effort[i0] + digram_effort[i1, i2])
 
     initialize_letters()
     initialize_digrams()
+    initialize_trigrams()
     initialize_roll_map()
+    initialize_tri_roll_map()
 
 
 class Keyboard:
@@ -330,6 +242,7 @@ class Keyboard:
             self.penalty = other.penalty
         else:
             self.keyboard = np.array(range(len(keys)), dtype=int)
+            # np.random.shuffle(self.keyboard)
             self.calculate_penalties()
 
     def neighbor(self):
@@ -350,11 +263,12 @@ class Keyboard:
         letter_delta = np.sum(letter_frequency[kb] * effort)
 
         # digram
-        digram_delta = np.sum(np.add.outer(effort, effort)
-                              * roll_map
-                              * digram_frequency[kb][:, kb])
+        digram_delta = np.sum(digram_effort * digram_frequency[kb][:, kb]) / 2
 
-        self.penalty = letter_delta + digram_delta
+        # trigram
+        trigram_delta = np.sum(trigram_effort * trigram_frequency[kb][:, kb][:, :, kb]) / 3
+
+        self.penalty = letter_delta + digram_delta + trigram_delta
 
     def score_and_apply_neighbor(self, i1: int, i2: int):
         """
@@ -376,8 +290,6 @@ class Keyboard:
         best = self.deepcopy()
         curr = self.deepcopy()
         for i in range(iterations):
-            if i % (iterations // 100) == 0:
-                print(end='.')
             t = math.exp((iterations - i - 1) / iterations) - 1
             prev_penalty = curr.penalty
             i1, i2 = curr.neighbor()
@@ -385,25 +297,19 @@ class Keyboard:
             if curr.penalty < prev_penalty + t:
                 # We're good
                 if curr.penalty < best.penalty:
+                    print(f'{curr}\n{best.penalty} -> {curr.penalty}')
                     best = curr.deepcopy()
             else:
                 # Undo
                 curr.apply_neighbor(i1, i2)
                 curr.penalty = prev_penalty
 
-        print('\n', curr.penalty, best.penalty)
         return best
 
     def deepcopy(self):
         return Keyboard(self)
 
     def __repr__(self):
-        """
-        >>> Keyboard()
-        y   p   m   k   v   x   j   u   o   b
-         g   i   t   s   f   w   n   e   a   c   .
-           .   .   d   h   z   r   l   .   q   .
-        """
         return str(self)
 
     def __str__(self):
@@ -429,11 +335,18 @@ if __name__ == '__main__':
     initialize()
 
     import doctest
+
     doctest.testmod()
 
     kb = Keyboard()
+    print(kb)
+    print(kb.penalty)
     # import cProfile
     # cProfile.run('kb.optimize(100_000)')
-    for i in range(100):
-        kb = kb.optimize(i * 10_000)
-        print(kb)
+    reheats = 1_000_000
+    its = 500
+    for i in range(reheats):
+        kb = kb.optimize(its - i * its // reheats)
+
+    for i in range(its):
+        kb = kb.optimize(its - i)
