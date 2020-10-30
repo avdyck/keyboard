@@ -14,34 +14,34 @@ digram_only_optimized = [
         'z', 'x', 'd', 'h', ';', 'r', 'l', '<', '>', '?',
 ]
 
-trigram_optimized = [
-    'q',  'w',  'o',  'b',  'k',  'j',  'm',  'u',  'c',  'z',
-     'v',  'i',  'a',  't',  'g',  'f',  'n',  'e',  'r',  'p',  '"',
-       ';',  'x',  'd',  's',  'y',  'l',  'h',  '<',  '>',  '?',
+trigram_optimized_1 = [
+   'x',  'p',  'o',  'k',  'v',  'f',  'm',  'u',  'c',  'z',
+    'j',  'i',  'a',  't',  'g',  'w',  'n',  'e',  'r',  'y',  '"',
+      ';',  'q',  'd',  's',  'b',  'l',  'h',  '<',  '>',  '?',
 ]
 
-trigram_alternating = [
-    'q',  'y',  'o',  'u',  'f',  'b',  'm',  'd',  's',  'z',
-     'h',  'i',  'e',  'a',  'j',  'w',  'n',  't',  'g',  'c',  ';',
-       '?',  '<',  '>',  'k',  '"',  'l',  'r',  'p',  'v',  'x',
+trigram_optimized_2 = [
+   'q',  'w',  'o',  'p',  'b',  'f',  'l',  'u',  's',  ';',
+    'j',  'i',  'a',  't',  'g',  'k',  'n',  'e',  'r',  'y',  '"',
+      'z',  'x',  'c',  'd',  'v',  'h',  'm',  '<',  '>',  '?',
 ]
 
-keys = trigram_optimized
+keys = trigram_optimized_2
 keymap = {k: i for i, k in enumerate(keys)}
 
-fixed_keys = set(keymap[k] for k in '?<>";ioauexqwv')
+fixed_keys = set(keymap[k] for k in '<>?";oiaueqwzxcvgsrlm')
 
 effort = np.array([
-    6.0, 1.6, 1.3, 1.5, 2.0, 2.6, 1.5, 1.3, 1.6, 3.0,
-     1.8, 1.1, 1.0, 1.0, 1.5, 1.5, 1.0, 1.0, 1.1, 1.8, 3.2,
-        6.5, 6.0, 1.2, 1.2, 2.5, 1.2, 1.2, 1.8, 2.2, 3.2,
+    6.0, 1.6, 1.3, 1.5, 2.0, 2.6, 1.5, 1.3, 1.6, 6.0,
+     5.0, 1.1, 1.0, 1.0, 1.5, 1.5, 1.0, 1.0, 1.1, 5.0, 8.0,
+        6.0, 8.0, 1.2, 1.2, 2.5, 1.2, 1.2, 1.8, 2.2, 8.0,
 ], dtype=float)
 
 digram_effort = np.zeros((len(keys), len(keys)), dtype=float)
 trigram_effort = np.zeros((len(keys), len(keys), len(keys)), dtype=float)
 
 a = 1.0
-b = 0.8
+b = 0.6
 c = 0.6
 d = 0.5
 roll_map = np.array([
@@ -201,14 +201,20 @@ def initialize():
         roll_map[i] = roll_map.T[i]
         for i0 in range(len(keys)):
             for i1 in range(len(keys)):
-                digram_effort[i0][i1] = roll_map[i0][i1] * (effort[i0] + effort[i1]) / 2
+                digram_effort[i0][i1] = roll_map[i0][i1] * (effort[i0] + effort[i1])
 
     def initialize_tri_roll_map():
 
-        cols = [
-            0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
-            0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+        fingers = [
+            0, 1, 2, 3, 3, 4, 4, 5, 6, 7,
+            0, 1, 2, 3, 3, 4, 4, 5, 6, 7, 7,
+            0, 1, 3, 3, 3, 4, 4, 5, 6, 7,
+        ]
+
+        fongers = [
+            0, 1, 2, 3, 3, 3, 3, 2, 1, 0,
+            0, 1, 2, 3, 3, 3, 3, 2, 1, 0, 0,
+            0, 1, 3, 3, 3, 3, 3, 2, 1, 0,
         ]
 
         rows = [
@@ -226,8 +232,45 @@ def initialize():
         for i0 in range(len(keys)):
             for i1 in range(len(keys)):
                 for i2 in range(len(keys)):
-                    # Best case scenario: average of digram efforts
-                    trigram_effort[i0, i1, i2] = (2 * digram_effort[i0, i1] + 2 * digram_effort[i1, i2] + digram_effort[i0, i2]) / 5
+
+                    if i0 == i1 == i2:
+                        # who cares lol
+                        tri_effort = 3 * effort[i1]
+
+                    elif i0 == i2:
+                        if roll_map[i0, i1] == a or fongers[i0] == 0:
+                            # bad case where i1 resets i0 progress
+                            tri_effort = 2 * effort[i0] + effort[i1]
+                        else:
+                            tri_effort = digram_effort[i1, i2]
+
+                    elif i0 == i1:
+                        tri_effort = effort[i0] + digram_effort[i1, i2]
+                    elif i1 == i2:
+                        tri_effort = digram_effort[i0, i1] + effort[i2]
+                    elif hand[i0] != hand[i1] == hand[i2]:
+                        tri_effort = digram_effort[i0, i1] + digram_effort[i1, i2]
+                    elif hand[i0] == hand[i1] != hand[i2]:
+                        tri_effort = digram_effort[i0, i1] + digram_effort[i1, i2]
+                    elif hand[i0] != hand[i1] != hand[i2]:
+                        tri_effort = digram_effort[i0, i1] + digram_effort[i1, i2] + 0.5 * digram_effort[i0, i2]
+
+                    elif hand[i0] == hand[i1] == hand[i2]:
+                        # all same hand: could be worst or best case scenario depending on which fingeys are used
+                        finger0 = fingers[i0]
+                        finger1 = fingers[i1]
+                        finger2 = fingers[i2]
+                        horizontal_roll = (finger0 < finger1 < finger2) or (finger0 > finger1 > finger2)
+
+                        if horizontal_roll or finger0 == finger2:
+                            tri_effort = digram_effort[i0, i1] + digram_effort[i1, i2] + 0.5 * digram_effort[i0, i2]
+                        else:
+                            # worst case: same hand non horizontal weird shit: not even gonna look at the roll graph
+                            tri_effort = effort[i0] + effort[i1] + effort[i2]
+                    else:
+                        raise Exception('huh')
+
+                    trigram_effort[i0, i1, i2] = tri_effort
 
     initialize_letters()
     initialize_digrams()
@@ -245,13 +288,13 @@ class Keyboard:
             self.keyboard = np.array(range(len(keys)), dtype=int)
             # np.random.shuffle(self.keyboard)
 
-            i = -1
-            while i < len(self.keyboard) - 1:
-                i += 1
-                k = self.keyboard[i]
-                if i != k and k in fixed_keys:
-                    self.apply_neighbor(i, k)
-                    i = min(i, k)
+            changed = True
+            while changed:
+                changed = False
+                for i, k in enumerate(self.keyboard):
+                    if i != k and k in fixed_keys:
+                        self.apply_neighbor(i, k)
+                        changed = True
 
             self.calculate_penalties()
 
@@ -353,10 +396,10 @@ if __name__ == '__main__':
     print(kb.penalty)
     # import cProfile
     # cProfile.run('kb.optimize(100_000)')
-    reheats = 1_000_000
-    its = 500
+    reheats = 100_000
+    its = 200
     for i in range(reheats):
         kb = kb.optimize(its - i * its // reheats)
 
     for i in range(its):
-        kb = kb.optimize(its - i)
+        kb = kb.optimize(100)
