@@ -21,15 +21,15 @@ trigram_optimized_1 = [
 ]
 
 trigram_optimized_2 = [
-   'q',  'w',  'o',  'p',  'b',  'f',  'l',  'u',  's',  ';',
+   'q',  'w',  'o',  'p',  'b',  'f',  'm',  'u',  's',  ';',
     'j',  'i',  'a',  't',  'g',  'k',  'n',  'e',  'r',  'y',  '"',
-      'z',  'x',  'c',  'd',  'v',  'h',  'm',  '<',  '>',  '?',
+      'z',  'x',  'c',  'd',  'v',  'h',  'l',  '<',  '>',  '?',
 ]
 
 keys = trigram_optimized_2
 keymap = {k: i for i, k in enumerate(keys)}
 
-fixed_keys = set(keymap[k] for k in '<>?";oiaueqwzxcvgsrlm')
+fixed_keys = set(keymap[k] for k in '<>?";qwzcxv')
 
 effort = np.array([
     6.0, 1.6, 1.3, 1.5, 2.0, 2.6, 1.5, 1.3, 1.6, 6.0,
