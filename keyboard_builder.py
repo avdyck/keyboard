@@ -15,26 +15,26 @@ digram_only_optimized = [
 ]
 
 trigram_optimized_1 = [
-   'x',  'p',  'o',  'k',  'v',  'f',  'm',  'u',  'c',  'z',
-    'j',  'i',  'a',  't',  'g',  'w',  'n',  'e',  'r',  'y',  '"',
-      ';',  'q',  'd',  's',  'b',  'l',  'h',  '<',  '>',  '?',
+   'q',  'o',  'u',  'k',  'd',  'f',  'm',  'p',  'r',  ';',
+    'i',  'a',  'e',  't',  'g',  'w',  'n',  's',  'y',  'j',  '"',
+      'z',  'x',  'c',  'v',  'b',  'l',  'h',  '<',  '>',  '?',
 ]
 
 trigram_optimized_2 = [
-   'q',  'w',  'o',  'p',  'b',  'f',  'm',  'u',  's',  ';',
-    'j',  'i',  'a',  't',  'g',  'k',  'n',  'e',  'r',  'y',  '"',
-      'z',  'x',  'c',  'd',  'v',  'h',  'l',  '<',  '>',  '?',
+   'q',  'p',  'o',  'k',  'b',  'f',  'm',  'u',  's',  'z',
+    'j',  'i',  'a',  't',  'g',  'w',  'n',  'e',  'r',  'y',  '"',
+      ';',  'x',  'c',  'd',  'v',  'h',  'l',  '<',  '>',  '?',
 ]
 
 keys = trigram_optimized_2
 keymap = {k: i for i, k in enumerate(keys)}
 
-fixed_keys = set(keymap[k] for k in '<>?";qwzcxv')
+fixed_keys = set(keymap[k] for k in '<>?";cxioatgneryuslhp')
 
 effort = np.array([
-    6.0, 1.6, 1.3, 1.5, 2.0, 2.6, 1.5, 1.3, 1.6, 6.0,
-     5.0, 1.1, 1.0, 1.0, 1.5, 1.5, 1.0, 1.0, 1.1, 5.0, 8.0,
-        6.0, 8.0, 1.2, 1.2, 2.5, 1.2, 1.2, 1.8, 2.2, 8.0,
+    6.0, 1.3, 1.3, 1.5, 2.5, 2.6, 1.5, 1.3, 1.3, 6.0,
+     3.0, 1.1, 1.0, 1.0, 1.5, 1.5, 1.0, 1.0, 1.1, 3.0, 8.0,
+        8.0, 8.0, 1.2, 1.2, 2.5, 1.2, 1.2, 1.8, 2.2, 8.0,
 ], dtype=float)
 
 digram_effort = np.zeros((len(keys), len(keys)), dtype=float)
@@ -286,7 +286,7 @@ class Keyboard:
             self.penalty = other.penalty
         else:
             self.keyboard = np.array(range(len(keys)), dtype=int)
-            # np.random.shuffle(self.keyboard)
+            np.random.shuffle(self.keyboard)
 
             changed = True
             while changed:
