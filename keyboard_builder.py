@@ -1,174 +1,196 @@
 import math
+import random
 
 import numpy as np
 
 qwerty = [
     'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p',
-     'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', '"',
-        'z', 'x', 'c', 'v', 'b', 'n', 'm', '<', '>', '?'
+    'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';',
+    'z', 'x', 'c', 'v', 'b', 'n', 'm', '<', '>', '?'
 ]
 
-digram_only_optimized = [
-    'y', 'p', 'm', 'k', 'b', 'z', 'g', 'u', 'o', 'b',
-     'g', 'i', 't', 's', 'f', 'j', 'n', 'e', 'a', 'c', '"',
-        'z', 'x', 'd', 'h', ';', 'r', 'l', '<', '>', '?',
+optimized = [
+    'q', 'p', 'u', 'o', 'x', 'f', 'l', 'r', 'd', 'b',
+    'c', 'i', 'e', 'a', 'g', 'v', 'n', 't', 's', 'w',
+    'z', ';', '<', '>', '?', 'j', 'h', 'm', 'k', 'y',
 ]
 
-trigram_optimized_1 = [
-   'q',  'o',  'u',  'k',  'd',  'f',  'm',  'p',  'r',  ';',
-    'i',  'a',  'e',  't',  'g',  'w',  'n',  's',  'y',  'j',  '"',
-      'z',  'x',  'c',  'v',  'b',  'l',  'h',  '<',  '>',  '?',
+custom1 = [
+    'v', 'p', 'u', 'o', 'q', 'f', 'l', 'r', 'd', 'y',
+    'k', 'i', 'e', 'a', 'j', 'm', 'n', 't', 's', 'c',
+    'z', '.', '.', '.', '.', 'x', 'h', 'w', 'g', 'b',
 ]
 
-trigram_optimized_2 = [
-   'q',  'p',  'o',  'k',  'b',  'f',  'm',  'u',  's',  'z',
-    'j',  'i',  'a',  't',  'g',  'w',  'n',  'e',  'r',  'y',  '"',
-      ';',  'x',  'c',  'd',  'v',  'h',  'l',  '<',  '>',  '?',
+custom2 = [
+    'y', 'o', 'u', 'g', 'q', 'w', 'c', 'l', 'h', 'z',
+    'i', 'a', 'e', 't', 'k', 'f', 'd', 'r', 'n', 's',
+    '.', '.', '.', 'x', '.', 'b', 'p', 'j', 'm', 'v',
 ]
 
-keys = trigram_optimized_2
+bruh_keyboard = [
+    'b', 'r', 'u', 'h', 'x', 'f', 'd', 'o', 'p', 'y',
+    'c', 's', 'e', 'n', 'l', 'g', 't', 'a', 'i', 'w',
+    'q', 'j', ';', 'm', 'z', 'v', 'k', '<', '>', '?',
+]
+
+hands = [
+    0, 0, 0, 0, 0, 1, 1, 1, 1, 1,
+    0, 0, 0, 0, 0, 1, 1, 1, 1, 1,
+    0, 0, 0, 0, 0, 1, 1, 1, 1, 1,
+]
+
+keys = custom2
 keymap = {k: i for i, k in enumerate(keys)}
 
-fixed_keys = set(keymap[k] for k in '<>?";cxioatgneryuslhp')
+fixed_keys = set(keymap[k] for k in 'iaeuo')
+# fixed_keys = set(keymap[k] for k in 'bruh;ueoapi<nt>?')
+loop_keys = set(keymap[k] for k in '')
 
 effort = np.array([
-    6.0, 1.3, 1.3, 1.5, 2.5, 2.6, 1.5, 1.3, 1.3, 6.0,
-     3.0, 1.1, 1.0, 1.0, 1.5, 1.5, 1.0, 1.0, 1.1, 3.0, 8.0,
-        8.0, 8.0, 1.2, 1.2, 2.5, 1.2, 1.2, 1.8, 2.2, 8.0,
+    2.0, 1.0, 1.0, 1.0, 1.9, 1.9, 1.0, 1.0, 1.0, 2.0,
+    1.0, 0.5, 0.5, 0.5, 1.5, 1.5, 0.5, 0.5, 0.5, 1.0,
+    1.8, 1.5, 1.6, 1.5, 1.7, 1.7, 1.5, 1.6, 1.5, 1.8,
 ], dtype=float)
+
+# effort = np.array([
+#     9.9, 1.0, 1.0, 1.0, 5.0, 5.0, 1.0, 1.0, 1.0, 9.9,
+#     5.0, 0.5, 0.5, 0.5, 1.5, 1.5, 0.5, 0.5, 0.5, 5.0,
+#     7.0, 2.0, 5.0, 1.5, 7.0, 7.0, 1.5, 5.0, 2.0, 7.0,
+# ], dtype=float)
+
 
 digram_effort = np.zeros((len(keys), len(keys)), dtype=float)
 trigram_effort = np.zeros((len(keys), len(keys), len(keys)), dtype=float)
 
-a = 1.0
-b = 0.6
-c = 0.6
-d = 0.5
+a = 0.3
+b = 0.4
+c = 0.7
+d = 1.0
+e = 2.0
+f = 2.2
+g = 2.5
+z = 0.3
 roll_map = np.array([
     [  # q
-        a, d, b, b, b, c, c, c, c, c,
-        a, a, b, b, b, c, c, c, c, c, c,
-        a, a, b, b, b, c, c, c, c, c
+        d, a, b, b, c, z, z, z, z, z,
+        e, d, d, c, c, z, z, z, z, z,
+        f, f, f, d, d, z, z, z, z, z,
     ], [  # w
-        a, a, d, b, b, c, c, c, c, c,
-        b, a, b, b, b, c, c, c, c, c, c,
-        a, a, b, b, b, c, c, c, c, c
+        0, d, a, b, b, z, z, z, z, z,
+        c, e, c, b, c, z, z, z, z, z,
+        f, f, f, c, d, z, z, z, z, z,
     ], [  # e
-        a, a, a, d, b, c, c, c, c, c,
-        b, b, a, b, b, c, c, c, c, c, c,
-        a, a, a, b, b, c, c, c, c, c
+        0, 0, d, a, b, z, z, z, z, z,
+        c, d, e, b, b, z, z, z, z, z,
+        e, f, f, c, c, z, z, z, z, z,
     ], [  # r
-        a, a, a, a, a, c, c, c, c, c,
-        b, b, a, a, a, c, c, c, c, c, c,
-        a, a, a, a, a, c, c, c, c, c
+        0, 0, 0, d, e, z, z, z, z, z,
+        b, b, c, e, f, z, z, z, z, z,
+        c, e, f, f, g, z, z, z, z, z,
     ], [  # t
-        a, a, a, a, a, c, c, c, c, c,
-        b, b, b, a, a, c, c, c, c, c, c,
-        a, a, a, a, a, c, c, c, c, c
+        0, 0, 0, 0, d, z, z, z, z, z,
+        b, c, c, f, e, z, z, z, z, z,
+        c, e, f, g, f, z, z, z, z, z,
     ], [  # y
-        a, a, a, a, a, a, a, b, b, b,
-        c, c, c, c, c, a, a, b, b, b, b,
-        c, c, c, c, c, a, a, a, a, a
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        z, z, z, z, z, 0, 0, 0, 0, 0,
+        z, z, z, z, z, 0, 0, 0, 0, 0,
     ], [  # u
-        a, a, a, a, a, a, a, d, b, b,
-        c, c, c, c, c, a, a, b, b, b, b,
-        c, c, c, c, c, a, a, a, a, b
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        z, z, z, z, z, 0, 0, 0, 0, 0,
+        z, z, z, z, z, 0, 0, 0, 0, 0,
     ], [  # i
-        a, a, a, a, a, a, a, a, d, b,
-        c, c, c, c, c, b, b, a, b, b, b,
-        c, c, c, c, c, b, b, a, b, b
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        z, z, z, z, z, 0, 0, 0, 0, 0,
+        z, z, z, z, z, 0, 0, 0, 0, 0,
     ], [  # o
-        a, a, a, a, a, a, a, a, a, d,
-        c, c, c, c, c, b, b, b, a, b, a,
-        c, c, c, c, c, b, b, a, a, a
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        z, z, z, z, z, 0, 0, 0, 0, 0,
+        z, z, z, z, z, 0, 0, 0, 0, 0,
     ], [  # p
-        a, a, a, a, a, a, a, a, a, a,
-        c, c, c, c, c, b, b, b, b, a, a,
-        c, c, c, c, c, b, b, a, a, a
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        z, z, z, z, z, 0, 0, 0, 0, 0,
+        z, z, z, z, z, 0, 0, 0, 0, 0,
     ], [  # a
-        a, a, a, a, a, a, a, a, a, a,
-        a, d, b, b, b, c, c, c, c, c, c,
-        a, b, b, b, b, c, c, c, c, c
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        d, a, b, b, b, z, z, z, z, z,
+        e, d, d, c, c, z, z, z, z, z,
     ], [  # s
-        a, a, a, a, a, a, a, a, a, a,
-        a, a, d, b, b, c, c, c, c, c, c,
-        a, a, b, b, b, c, c, c, c, c
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, d, a, b, c, z, z, z, z, z,
+        1, e, d, c, c, z, z, z, z, z,
     ], [  # d
-        a, a, a, a, a, a, a, a, a, a,
-        a, a, a, d, b, c, c, c, c, c, c,
-        b, a, b, b, b, c, c, c, c, c
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, d, a, b, z, z, z, z, z,
+        c, d, e, b, c, z, z, z, z, z,
     ], [  # f
-        a, a, a, a, a, a, a, a, a, a,
-        a, a, a, a, a, c, c, c, c, c, c,
-        b, a, a, a, a, c, c, c, c, c
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, d, e, z, z, z, z, z,
+        c, c, d, e, f, z, z, z, z, z,
     ], [  # g
-        a, a, a, a, a, a, a, a, a, a,
-        a, a, a, a, a, c, c, c, c, c, c,
-        b, a, a, a, a, c, c, c, c, c
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, d, z, z, z, z, z,
+        c, d, d, f, e, z, z, z, z, z,
     ], [  # h
-        a, a, a, a, a, a, a, a, a, a,
-        a, a, a, a, a, a, a, b, b, b, b,
-        c, c, c, c, c, a, a, a, a, b
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        z, z, z, z, z, 0, 0, 0, 0, 0,
     ], [  # j
-        a, a, a, a, a, a, a, a, a, a,
-        a, a, a, a, a, a, a, d, b, b, b,
-        c, c, c, c, c, a, a, b, b, b
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        z, z, z, z, z, 0, 0, 0, 0, 0,
     ], [  # k
-        a, a, a, a, a, a, a, a, a, a,
-        a, a, a, a, a, a, a, a, d, b, b,
-        c, c, c, c, c, b, b, a, b, a
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        z, z, z, z, z, 0, 0, 0, 0, 0,
     ], [  # l
-        a, a, a, a, a, a, a, a, a, a,
-        a, a, a, a, a, a, a, a, a, d, b,
-        c, c, c, c, c, b, b, a, a, a
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        z, z, z, z, z, 0, 0, 0, 0, 0,
     ], [  # ;
-        a, a, a, a, a, a, a, a, a, a,
-        a, a, a, a, a, a, a, a, a, a, a,
-        c, c, c, c, c, b, b, b, b, a
-    ], [  # '
-        a, a, a, a, a, a, a, a, a, a,
-        a, a, a, a, a, a, a, a, a, a, a,
-        c, c, c, c, c, b, b, b, a, a
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        z, z, z, z, z, 0, 0, 0, 0, 0,
     ], [  # z
-        a, a, a, a, a, a, a, a, a, a,
-        a, a, a, a, a, a, a, a, a, a, a,
-        a, d, b, b, b, c, c, c, c, c
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        d, a, b, b, c, z, z, z, z, z,
     ], [  # x
-        a, a, a, a, a, a, a, a, a, a,
-        a, a, a, a, a, a, a, a, a, a, a,
-        a, a, d, b, b, c, c, c, c, c
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, d, a, b, c, z, z, z, z, z,
     ], [  # c
-        a, a, a, a, a, a, a, a, a, a,
-        a, a, a, a, a, a, a, a, a, a, a,
-        a, a, a, a, a, c, c, c, c, c
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, d, a, b, z, z, z, z, z,
     ], [  # v
-        a, a, a, a, a, a, a, a, a, a,
-        a, a, a, a, a, a, a, a, a, a, a,
-        a, a, a, a, a, c, c, c, c, c
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, d, e, z, z, z, z, z,
     ], [  # b
-        a, a, a, a, a, a, a, a, a, a,
-        a, a, a, a, a, a, a, a, a, a, a,
-        a, a, a, a, a, c, c, c, c, c
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, d, z, z, z, z, z,
     ], [  # n
-        a, a, a, a, a, a, a, a, a, a,
-        a, a, a, a, a, a, a, a, a, a, a,
-        a, a, a, a, a, a, a, b, b, b
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     ], [  # m
-        a, a, a, a, a, a, a, a, a, a,
-        a, a, a, a, a, a, a, a, a, a, a,
-        a, a, a, a, a, a, a, d, b, b
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     ], [  # ,
-        a, a, a, a, a, a, a, a, a, a,
-        a, a, a, a, a, a, a, a, a, a, a,
-        a, a, a, a, a, a, a, a, d, b
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     ], [  # .
-        a, a, a, a, a, a, a, a, a, a,
-        a, a, a, a, a, a, a, a, a, a, a,
-        a, a, a, a, a, a, a, a, a, d
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     ], [  # /
-        a, a, a, a, a, a, a, a, a, a,
-        a, a, a, a, a, a, a, a, a, a, a,
-        a, a, a, a, a, a, a, a, a, a
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     ]
 ], dtype=float)
 
@@ -199,6 +221,17 @@ def initialize():
     def initialize_roll_map():
         i = np.tril_indices_from(roll_map)
         roll_map[i] = roll_map.T[i]
+
+        for i in range(3):
+            for l in range(3):
+                for j, k in ((0, 9), (1, 8), (2, 7), (3, 6), (4, 5)):
+                    roll_map[k + 10 * l][5 + 10 * i:10 + 10 * i] = roll_map[j + 10 * l][0 + 10 * i:5 + 10 * i][::-1]
+
+        tmp_keymap = {k: i for i, k in enumerate(qwerty)}
+        assert roll_map[tmp_keymap['p'], tmp_keymap['k']] == roll_map[tmp_keymap['q'], tmp_keymap['d']]
+        assert roll_map[tmp_keymap['v'], tmp_keymap['e']] == roll_map[tmp_keymap['m'], tmp_keymap['i']]
+        assert roll_map[tmp_keymap['y'], tmp_keymap['p']] == roll_map[tmp_keymap['t'], tmp_keymap['q']]
+
         for i0 in range(len(keys)):
             for i1 in range(len(keys)):
                 digram_effort[i0][i1] = roll_map[i0][i1] * (effort[i0] + effort[i1])
@@ -207,25 +240,19 @@ def initialize():
 
         fingers = [
             0, 1, 2, 3, 3, 4, 4, 5, 6, 7,
-            0, 1, 2, 3, 3, 4, 4, 5, 6, 7, 7,
+            0, 1, 2, 3, 3, 4, 4, 5, 6, 7,
             0, 1, 3, 3, 3, 4, 4, 5, 6, 7,
-        ]
-
-        fongers = [
-            0, 1, 2, 3, 3, 3, 3, 2, 1, 0,
-            0, 1, 2, 3, 3, 3, 3, 2, 1, 0, 0,
-            0, 1, 3, 3, 3, 3, 3, 2, 1, 0,
         ]
 
         rows = [
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
             2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
         ]
 
         hand = [
             0, 0, 0, 0, 0, 1, 1, 1, 1, 1,
-            0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1,
+            0, 0, 0, 0, 0, 1, 1, 1, 1, 1,
             0, 0, 0, 0, 0, 1, 1, 1, 1, 1,
         ]
 
@@ -233,44 +260,30 @@ def initialize():
             for i1 in range(len(keys)):
                 for i2 in range(len(keys)):
 
-                    if i0 == i1 == i2:
-                        # who cares lol
-                        tri_effort = 3 * effort[i1]
+                    tri_effort = (0.4 * digram_effort[i0, i1] + 0.4 * digram_effort[i1, i2] + 0.2 * digram_effort[i0, i2])
 
-                    elif i0 == i2:
-                        if roll_map[i0, i1] == a or fongers[i0] == 0:
-                            # bad case where i1 resets i0 progress
-                            tri_effort = 2 * effort[i0] + effort[i1]
-                        else:
-                            tri_effort = digram_effort[i1, i2]
-
-                    elif i0 == i1:
-                        tri_effort = effort[i0] + digram_effort[i1, i2]
-                    elif i1 == i2:
-                        tri_effort = digram_effort[i0, i1] + effort[i2]
-                    elif hand[i0] != hand[i1] == hand[i2]:
+                    # hand pingpong good case
+                    if hand[i0] != hand[i1] == hand[i2]:
                         tri_effort = digram_effort[i0, i1] + digram_effort[i1, i2]
                     elif hand[i0] == hand[i1] != hand[i2]:
                         tri_effort = digram_effort[i0, i1] + digram_effort[i1, i2]
-                    elif hand[i0] != hand[i1] != hand[i2]:
-                        tri_effort = digram_effort[i0, i1] + digram_effort[i1, i2] + 0.5 * digram_effort[i0, i2]
-
                     elif hand[i0] == hand[i1] == hand[i2]:
                         # all same hand: could be worst or best case scenario depending on which fingeys are used
                         finger0 = fingers[i0]
                         finger1 = fingers[i1]
                         finger2 = fingers[i2]
                         horizontal_roll = (finger0 < finger1 < finger2) or (finger0 > finger1 > finger2)
+                        if not horizontal_roll:
+                            tri_effort *= 2
 
-                        if horizontal_roll or finger0 == finger2:
-                            tri_effort = digram_effort[i0, i1] + digram_effort[i1, i2] + 0.5 * digram_effort[i0, i2]
-                        else:
-                            # worst case: same hand non horizontal weird shit: not even gonna look at the roll graph
-                            tri_effort = effort[i0] + effort[i1] + effort[i2]
-                    else:
-                        raise Exception('huh')
+                        row0 = rows[0]
+                        row1 = rows[1]
+                        row2 = rows[2]
+                        vertical_roll = (row0 <= row1 <= row2) or (row0 >= row1 >= row2)
+                        if not vertical_roll:
+                            tri_effort *= 2
 
-                    trigram_effort[i0, i1, i2] = tri_effort
+                    trigram_effort[i0, i1, i2] = tri_effort / 2
 
     initialize_letters()
     initialize_digrams()
@@ -292,7 +305,7 @@ class Keyboard:
             while changed:
                 changed = False
                 for i, k in enumerate(self.keyboard):
-                    if i != k and k in fixed_keys:
+                    if i != k and (k in fixed_keys or k in loop_keys):
                         self.apply_neighbor(i, k)
                         changed = True
 
@@ -306,14 +319,28 @@ class Keyboard:
         ...     assert n0 != n1
         """
         global fixed_keys
-        candidates = [i for i, k in enumerate(self.keyboard) if k not in fixed_keys]
 
-        return np.random.choice(candidates, 2, replace=False)
+        candidates = [i for i, k in enumerate(self.keyboard)
+                      if k not in fixed_keys]
+
+        i0 = random.choice(candidates)
+        if i0 in loop_keys:
+            candidates = [i for i, k in enumerate(self.keyboard)
+                          if k in loop_keys
+                          if i != i0]
+            return i0, random.choice(candidates)
+
+        candidates = [i for i, k in enumerate(self.keyboard)
+                      if k not in fixed_keys
+                      if k not in loop_keys
+                      if i != i0]
+
+        return i0, random.choice(candidates)
 
     def calculate_penalties(self):
         # letter
         kb = self.keyboard
-        letter_delta = np.sum(letter_frequency[kb] * effort)
+        # letter_delta = np.sum(letter_frequency[kb] * effort)
 
         # digram
         digram_delta = np.sum(digram_effort * digram_frequency[kb][:, kb])
@@ -321,15 +348,9 @@ class Keyboard:
         # trigram
         trigram_delta = np.sum(trigram_effort * trigram_frequency[kb][:, kb][:, :, kb])
 
-        self.penalty = letter_delta + digram_delta + trigram_delta
+        self.penalty = digram_delta + trigram_delta
 
     def score_and_apply_neighbor(self, i1: int, i2: int):
-        """
-        >>> kb = Keyboard()
-        >>> kb.score_and_apply_neighbor(keymap['x'], keymap['s'])
-        >>> kb.penalty > Keyboard().penalty
-        True
-        """
         self.apply_neighbor(i1, i2)
         self.calculate_penalties()
 
@@ -339,23 +360,36 @@ class Keyboard:
         self.keyboard[i1] = key2
         self.keyboard[i2] = key1
 
-    def optimize(self, iterations: int):
+    def optimize(self):
         best = self.deepcopy()
         curr = self.deepcopy()
-        for i in range(iterations):
-            t = math.exp((iterations - i - 1) / iterations) - 1
-            prev_penalty = curr.penalty
-            i1, i2 = curr.neighbor()
-            curr.score_and_apply_neighbor(i1, i2)
-            if curr.penalty < prev_penalty + t:
-                # We're good
-                if curr.penalty < best.penalty:
-                    print(f'{curr}\n{best.penalty} -> {curr.penalty}')
-                    best = curr.deepcopy()
-            else:
-                # Undo
-                curr.apply_neighbor(i1, i2)
-                curr.penalty = prev_penalty
+
+        for i in range(100):
+            max_idle = max_accept = i * 10
+
+            threshold = curr.penalty * 1.02
+            accept = 0
+            idle = 0
+            while idle < max_idle:
+                prev_penalty = curr.penalty
+                i1, i2 = curr.neighbor()
+                curr.score_and_apply_neighbor(i1, i2)
+                if curr.penalty >= threshold:
+                    # Undo
+                    idle += 1
+                    curr.apply_neighbor(i1, i2)
+                    curr.penalty = prev_penalty
+                else:
+                    # Bingo
+                    if curr.penalty < best.penalty:
+                        print(f'{curr}\n{best.penalty} -> {curr.penalty}')
+                        best = curr.deepcopy()
+
+                    idle = 0
+                    accept += 1
+                    if accept > max_accept:
+                        accept = 0
+                        threshold = curr.penalty
 
         return best
 
@@ -372,12 +406,12 @@ class Keyboard:
             result.append('   ')
         result.pop()
         result.append('\n ')
-        for k in self.keyboard[10:21]:
+        for k in self.keyboard[10:20]:
             result.append(keys[k])
             result.append('   ')
         result.pop()
-        result.append('\n   ')
-        for k in self.keyboard[21:]:
+        result.append('\n  ')
+        for k in self.keyboard[20:]:
             result.append(keys[k])
             result.append('   ')
         result.pop()
@@ -392,14 +426,14 @@ if __name__ == '__main__':
     doctest.testmod()
 
     kb = Keyboard()
-    print(kb)
-    print(kb.penalty)
-    # import cProfile
-    # cProfile.run('kb.optimize(100_000)')
-    reheats = 100_000
-    its = 200
-    for i in range(reheats):
-        kb = kb.optimize(its - i * its // reheats)
 
-    for i in range(its):
-        kb = kb.optimize(100)
+    kb.optimize()
+
+    # print(kb)
+    # print(kb.penalty)
+    # # import cProfile
+    # # cProfile.run('kb.optimize(100_000)')
+    # reheats = 100_000
+    # its = 100
+    # for i in range(reheats):
+    #     kb = kb.optimize(its)
