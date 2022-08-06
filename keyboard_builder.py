@@ -6,7 +6,7 @@ import numpy as np
 qwerty = [
     'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p',
     'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';',
-    'z', 'x', 'c', 'v', 'b', 'n', 'm', '<', '>', '?'
+    'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/'
 ]
 
 optimized = [
@@ -33,18 +33,32 @@ bruh_keyboard = [
     'q', 'j', ';', 'm', 'z', 'v', 'k', '<', '>', '?',
 ]
 
-hands = [
+hand = [
     0, 0, 0, 0, 0, 1, 1, 1, 1, 1,
     0, 0, 0, 0, 0, 1, 1, 1, 1, 1,
     0, 0, 0, 0, 0, 1, 1, 1, 1, 1,
 ]
 
-keys = custom2
-keymap = {k: i for i, k in enumerate(keys)}
+fingers = [
+    0, 1, 2, 3, 3, 4, 4, 5, 6, 7,
+    0, 1, 2, 3, 3, 4, 4, 5, 6, 7,
+    0, 1, 3, 3, 3, 4, 4, 5, 6, 7,
+]
 
-fixed_keys = set(keymap[k] for k in 'iaeuo')
+rows = [
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+    2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+]
+
+keys = qwerty
+keymap = {k: i for i, k in enumerate(keys)}
+qwertymap = {k: i for i, k in enumerate(qwerty)}
+
+fixed_keys = set(keymap[k] for k in '')
 # fixed_keys = set(keymap[k] for k in 'bruh;ueoapi<nt>?')
-loop_keys = set(keymap[k] for k in '')
+vim_keys = set(qwertymap[k] for k in '')
+vimmable_keys = set(keymap[k] for k in 'hjkl,;mntfqz')
 
 effort = np.array([
     2.0, 1.0, 1.0, 1.0, 1.9, 1.9, 1.0, 1.0, 1.0, 2.0,
@@ -69,7 +83,7 @@ d = 1.0
 e = 2.0
 f = 2.2
 g = 2.5
-z = 0.3
+z = 0.5
 roll_map = np.array([
     [  # q
         d, a, b, b, c, z, z, z, z, z,
@@ -238,24 +252,6 @@ def initialize():
 
     def initialize_tri_roll_map():
 
-        fingers = [
-            0, 1, 2, 3, 3, 4, 4, 5, 6, 7,
-            0, 1, 2, 3, 3, 4, 4, 5, 6, 7,
-            0, 1, 3, 3, 3, 4, 4, 5, 6, 7,
-        ]
-
-        rows = [
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-            2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-        ]
-
-        hand = [
-            0, 0, 0, 0, 0, 1, 1, 1, 1, 1,
-            0, 0, 0, 0, 0, 1, 1, 1, 1, 1,
-            0, 0, 0, 0, 0, 1, 1, 1, 1, 1,
-        ]
-
         for i0 in range(len(keys)):
             for i1 in range(len(keys)):
                 for i2 in range(len(keys)):
@@ -263,27 +259,29 @@ def initialize():
                     tri_effort = (0.4 * digram_effort[i0, i1] + 0.4 * digram_effort[i1, i2] + 0.2 * digram_effort[i0, i2])
 
                     # hand pingpong good case
-                    if hand[i0] != hand[i1] == hand[i2]:
-                        tri_effort = digram_effort[i0, i1] + digram_effort[i1, i2]
-                    elif hand[i0] == hand[i1] != hand[i2]:
-                        tri_effort = digram_effort[i0, i1] + digram_effort[i1, i2]
+                    if hand[i0] != hand[i1] == hand[i2] or hand[i0] == hand[i1] != hand[i2]:
+                        tri_effort *= 0.75
                     elif hand[i0] == hand[i1] == hand[i2]:
+                        brokie = False
                         # all same hand: could be worst or best case scenario depending on which fingeys are used
                         finger0 = fingers[i0]
                         finger1 = fingers[i1]
                         finger2 = fingers[i2]
-                        horizontal_roll = (finger0 < finger1 < finger2) or (finger0 > finger1 > finger2)
-                        if not horizontal_roll:
-                            tri_effort *= 2
+                        bad_horizontal_roll = (finger0 < finger1 and finger1 > finger2) or (finger0 > finger1 and finger1 < finger2)
+                        if bad_horizontal_roll:
+                            brokie = True
 
                         row0 = rows[0]
                         row1 = rows[1]
                         row2 = rows[2]
-                        vertical_roll = (row0 <= row1 <= row2) or (row0 >= row1 >= row2)
-                        if not vertical_roll:
+                        nice_vertical_roll = (row0 <= row1 <= row2) or (row0 >= row1 >= row2)
+                        if not nice_vertical_roll:
+                            brokie = True
+
+                        if brokie:
                             tri_effort *= 2
 
-                    trigram_effort[i0, i1, i2] = tri_effort / 2
+                    trigram_effort[i0, i1, i2] = tri_effort
 
     initialize_letters()
     initialize_digrams()
@@ -299,14 +297,24 @@ class Keyboard:
             self.penalty = other.penalty
         else:
             self.keyboard = np.array(range(len(keys)), dtype=int)
-            np.random.shuffle(self.keyboard)
+            # np.random.shuffle(self.keyboard)
 
             changed = True
             while changed:
                 changed = False
                 for i, k in enumerate(self.keyboard):
-                    if i != k and (k in fixed_keys or k in loop_keys):
+                    if i != k and k in fixed_keys:
                         self.apply_neighbor(i, k)
+                        changed = True
+
+                should_be_vim_keys = []
+                for i in vim_keys:
+                    if self.keyboard[i] not in vimmable_keys:
+                        should_be_vim_keys.append(i)
+
+                for i, k in enumerate(self.keyboard):
+                    if should_be_vim_keys and k in vimmable_keys and i not in vim_keys:
+                        self.apply_neighbor(i, should_be_vim_keys.pop())
                         changed = True
 
             self.calculate_penalties()
@@ -324,18 +332,23 @@ class Keyboard:
                       if k not in fixed_keys]
 
         i0 = random.choice(candidates)
-        if i0 in loop_keys:
-            candidates = [i for i, k in enumerate(self.keyboard)
-                          if k in loop_keys
-                          if i != i0]
-            return i0, random.choice(candidates)
 
-        candidates = [i for i, k in enumerate(self.keyboard)
-                      if k not in fixed_keys
-                      if k not in loop_keys
-                      if i != i0]
+        if i0 in vim_keys:
+            candidates = [i1 for i1, k in enumerate(self.keyboard)
+                          if i1 != i0
+                          if k in vimmable_keys]
 
-        return i0, random.choice(candidates)
+        else:
+            candidates = [i1 for i1, k in enumerate(self.keyboard)
+                          if k not in fixed_keys
+                          if i1 not in vim_keys
+                          if i1 != i0]
+
+        i1 = random.choice(candidates)
+        if self.keyboard[i0] not in vimmable_keys and i1 in vim_keys:
+            raise Exception
+
+        return i0, i1
 
     def calculate_penalties(self):
         # letter
@@ -365,7 +378,7 @@ class Keyboard:
         curr = self.deepcopy()
 
         for i in range(100):
-            max_idle = max_accept = i * 10
+            max_idle = max_accept = (1 + i) * 100
 
             threshold = curr.penalty * 1.02
             accept = 0
@@ -426,11 +439,11 @@ if __name__ == '__main__':
     doctest.testmod()
 
     kb = Keyboard()
+    print(kb)
+    print(kb.penalty)
 
     kb.optimize()
 
-    # print(kb)
-    # print(kb.penalty)
     # # import cProfile
     # # cProfile.run('kb.optimize(100_000)')
     # reheats = 100_000
