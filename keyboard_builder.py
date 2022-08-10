@@ -55,15 +55,14 @@ keys = qwerty
 keymap = {k: i for i, k in enumerate(keys)}
 qwertymap = {k: i for i, k in enumerate(qwerty)}
 
-fixed_keys = set(keymap[k] for k in '')
-# fixed_keys = set(keymap[k] for k in 'bruh;ueoapi<nt>?')
+fixed_keys = set(keymap[k] for k in './,qzxcv')
 vim_keys = set(qwertymap[k] for k in '')
-vimmable_keys = set(keymap[k] for k in 'hjkl,;mntfqz')
+vimmable_keys = set(keymap[k] for k in 'hjkl')
 
 effort = np.array([
-    2.0, 1.0, 1.0, 1.0, 1.9, 1.9, 1.0, 1.0, 1.0, 2.0,
-    1.0, 0.5, 0.5, 0.5, 1.5, 1.5, 0.5, 0.5, 0.5, 1.0,
-    1.8, 1.5, 1.6, 1.5, 1.7, 1.7, 1.5, 1.6, 1.5, 1.8,
+    2.0, 1.1, 1.05, 1.0, 1.9, 1.9, 1.0, 1.05, 1.1, 2.0,
+    1.0, 0.7, 0.65, 0.6, 1.5, 1.5, 0.6, 0.65, 0.7, 1.0,
+    1.8, 1.4, 1.35, 1.3, 1.7, 1.7, 1.3, 1.35, 1.4, 1.8,
 ], dtype=float)
 
 # effort = np.array([
@@ -72,39 +71,48 @@ effort = np.array([
 #     7.0, 2.0, 5.0, 1.5, 7.0, 7.0, 1.5, 5.0, 2.0, 7.0,
 # ], dtype=float)
 
+# effort = np.array([
+#     3.0, 2.4, 2.0, 2.2, 3.2, 3.2, 2.0, 2.0, 2.4, 3.0,
+#     1.6, 1.3, 1.1, 1.0, 2.9, 2.9, 1.1, 1.1, 1.3, 1.6,
+#     3.2, 2.6, 2.4, 1.6, 3.0, 3.0, 1.6, 2.4, 2.6, 3.2,
+# ], dtype=float)
+
 
 digram_effort = np.zeros((len(keys), len(keys)), dtype=float)
 trigram_effort = np.zeros((len(keys), len(keys), len(keys)), dtype=float)
 
 a = 0.3
 b = 0.4
-c = 0.7
-d = 1.0
+c = 0.5
+d = 0.7
+
 e = 2.0
 f = 2.2
-g = 2.5
+g = 2.4
+h = 2.6
+
 z = 0.5
 roll_map = np.array([
     [  # q
-        d, a, b, b, c, z, z, z, z, z,
-        e, d, d, c, c, z, z, z, z, z,
-        f, f, f, d, d, z, z, z, z, z,
+        e, a, b, b, c, z, z, z, z, z,
+        f, d, d, c, c, z, z, z, z, z,
+        g, g, g, d, d, z, z, z, z, z,
     ], [  # w
-        0, d, a, b, b, z, z, z, z, z,
-        c, e, c, b, c, z, z, z, z, z,
-        f, f, f, c, d, z, z, z, z, z,
+        0, e, a, b, b, z, z, z, z, z,
+        c, f, c, b, c, z, z, z, z, z,
+        g, g, g, c, d, z, z, z, z, z,
     ], [  # e
-        0, 0, d, a, b, z, z, z, z, z,
-        c, d, e, b, b, z, z, z, z, z,
-        e, f, f, c, c, z, z, z, z, z,
+        0, 0, e, a, b, z, z, z, z, z,
+        c, d, f, b, b, z, z, z, z, z,
+        f, g, g, c, c, z, z, z, z, z,
     ], [  # r
-        0, 0, 0, d, e, z, z, z, z, z,
-        b, b, c, e, f, z, z, z, z, z,
-        c, e, f, f, g, z, z, z, z, z,
+        0, 0, 0, e, f, z, z, z, z, z,
+        b, b, c, f, g, z, z, z, z, z,
+        c, f, g, g, h, z, z, z, z, z,
     ], [  # t
-        0, 0, 0, 0, d, z, z, z, z, z,
-        b, c, c, f, e, z, z, z, z, z,
-        c, e, f, g, f, z, z, z, z, z,
+        0, 0, 0, 0, e, z, z, z, z, z,
+        b, c, c, g, f, z, z, z, z, z,
+        c, f, g, h, g, z, z, z, z, z,
     ], [  # y
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         z, z, z, z, z, 0, 0, 0, 0, 0,
@@ -127,24 +135,24 @@ roll_map = np.array([
         z, z, z, z, z, 0, 0, 0, 0, 0,
     ], [  # a
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        d, a, b, b, b, z, z, z, z, z,
-        e, d, d, c, c, z, z, z, z, z,
+        e, a, b, b, b, z, z, z, z, z,
+        f, d, d, c, c, z, z, z, z, z,
     ], [  # s
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, d, a, b, c, z, z, z, z, z,
-        1, e, d, c, c, z, z, z, z, z,
+        0, e, a, b, c, z, z, z, z, z,
+        1, f, d, c, c, z, z, z, z, z,
     ], [  # d
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, d, a, b, z, z, z, z, z,
-        c, d, e, b, c, z, z, z, z, z,
+        0, 0, e, a, b, z, z, z, z, z,
+        c, d, f, b, c, z, z, z, z, z,
     ], [  # f
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, d, e, z, z, z, z, z,
-        c, c, d, e, f, z, z, z, z, z,
+        0, 0, 0, e, f, z, z, z, z, z,
+        c, c, d, f, g, z, z, z, z, z,
     ], [  # g
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, d, z, z, z, z, z,
-        c, d, d, f, e, z, z, z, z, z,
+        0, 0, 0, 0, e, z, z, z, z, z,
+        c, d, d, g, f, z, z, z, z, z,
     ], [  # h
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -168,23 +176,23 @@ roll_map = np.array([
     ], [  # z
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        d, a, b, b, c, z, z, z, z, z,
+        e, a, b, b, c, z, z, z, z, z,
     ], [  # x
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, d, a, b, c, z, z, z, z, z,
+        0, e, a, b, c, z, z, z, z, z,
     ], [  # c
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, d, a, b, z, z, z, z, z,
+        0, 0, e, a, b, z, z, z, z, z,
     ], [  # v
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, d, e, z, z, z, z, z,
+        0, 0, 0, e, f, z, z, z, z, z,
     ], [  # b
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, d, z, z, z, z, z,
+        0, 0, 0, 0, e, z, z, z, z, z,
     ], [  # n
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -259,26 +267,17 @@ def initialize():
                     tri_effort = (0.4 * digram_effort[i0, i1] + 0.4 * digram_effort[i1, i2] + 0.2 * digram_effort[i0, i2])
 
                     # hand pingpong good case
-                    if hand[i0] != hand[i1] == hand[i2] or hand[i0] == hand[i1] != hand[i2]:
-                        tri_effort *= 0.75
-                    elif hand[i0] == hand[i1] == hand[i2]:
-                        brokie = False
-                        # all same hand: could be worst or best case scenario depending on which fingeys are used
+                    if hand[i0] == hand[i1] == hand[i2]:
                         finger0 = fingers[i0]
                         finger1 = fingers[i1]
                         finger2 = fingers[i2]
-                        bad_horizontal_roll = (finger0 < finger1 and finger1 > finger2) or (finger0 > finger1 and finger1 < finger2)
-                        if bad_horizontal_roll:
-                            brokie = True
+                        row0 = rows[i0]
+                        row1 = rows[i1]
+                        row2 = rows[i2]
 
-                        row0 = rows[0]
-                        row1 = rows[1]
-                        row2 = rows[2]
+                        nice_horizontal_roll = (finger0 >= finger1 >= finger2) or (finger0 <= finger1 <= finger2)
                         nice_vertical_roll = (row0 <= row1 <= row2) or (row0 >= row1 >= row2)
-                        if not nice_vertical_roll:
-                            brokie = True
-
-                        if brokie:
+                        if not nice_horizontal_roll or not nice_vertical_roll:
                             tri_effort *= 2
 
                     trigram_effort[i0, i1, i2] = tri_effort
@@ -356,12 +355,12 @@ class Keyboard:
         # letter_delta = np.sum(letter_frequency[kb] * effort)
 
         # digram
-        digram_delta = np.sum(digram_effort * digram_frequency[kb][:, kb])
+        # digram_delta = np.sum(digram_effort * digram_frequency[kb][:, kb])
 
         # trigram
         trigram_delta = np.sum(trigram_effort * trigram_frequency[kb][:, kb][:, :, kb])
 
-        self.penalty = digram_delta + trigram_delta
+        self.penalty = trigram_delta
 
     def score_and_apply_neighbor(self, i1: int, i2: int):
         self.apply_neighbor(i1, i2)
@@ -418,12 +417,12 @@ class Keyboard:
             result.append(keys[k])
             result.append('   ')
         result.pop()
-        result.append('\n ')
+        result.append('\n')
         for k in self.keyboard[10:20]:
             result.append(keys[k])
             result.append('   ')
         result.pop()
-        result.append('\n  ')
+        result.append('\n')
         for k in self.keyboard[20:]:
             result.append(keys[k])
             result.append('   ')
