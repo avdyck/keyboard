@@ -5,7 +5,7 @@ import numpy as np
 
 qwerty = [
     'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p',
-    'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';',
+    'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ' ',
     'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/'
 ]
 
@@ -58,18 +58,19 @@ qwertymap = {k: i for i, k in enumerate(qwerty)}
 fixed_keys = set(keymap[k] for k in './,qzxcv')
 vim_keys = set(qwertymap[k] for k in '')
 vimmable_keys = set(keymap[k] for k in 'hjkl')
-
-effort = np.array([
-    2.0, 1.1, 1.05, 1.0, 1.9, 1.9, 1.0, 1.05, 1.1, 2.0,
-    1.0, 0.7, 0.65, 0.6, 1.5, 1.5, 0.6, 0.65, 0.7, 1.0,
-    1.8, 1.4, 1.35, 1.3, 1.7, 1.7, 1.3, 1.35, 1.4, 1.8,
-], dtype=float)
+space = keymap[' ']
 
 # effort = np.array([
-#     9.9, 1.0, 1.0, 1.0, 5.0, 5.0, 1.0, 1.0, 1.0, 9.9,
-#     5.0, 0.5, 0.5, 0.5, 1.5, 1.5, 0.5, 0.5, 0.5, 5.0,
-#     7.0, 2.0, 5.0, 1.5, 7.0, 7.0, 1.5, 5.0, 2.0, 7.0,
+#     2.0, 1.1, 1.05, 1.0, 1.9, 1.9, 1.0, 1.05, 1.1, 2.0,
+#     1.0, 0.7, 0.65, 0.6, 1.5, 1.5, 0.6, 0.65, 0.7, 1.0,
+#     1.8, 1.4, 1.35, 1.3, 1.7, 1.7, 1.3, 1.35, 1.4, 1.8,
 # ], dtype=float)
+
+effort = np.array([
+    9.9, 1.0, 1.0, 1.0, 5.0, 5.0, 1.0, 1.0, 1.0, 9.9,
+    5.0, 0.5, 0.5, 0.5, 1.5, 1.5, 0.5, 0.5, 0.5, 5.0,
+    7.0, 2.0, 5.0, 1.5, 7.0, 7.0, 1.5, 5.0, 2.0, 7.0,
+], dtype=float)
 
 # effort = np.array([
 #     3.0, 2.4, 2.0, 2.2, 3.2, 3.2, 2.0, 2.0, 2.4, 3.0,
@@ -231,13 +232,13 @@ def initialize():
     def initialize_digrams():
         with open('freq-digram.txt') as fh:
             for line in fh:
-                (l0, l1), f = line.strip().split('\t')
+                (l0, l1), f = line.replace('\n', '').split('\t')
                 digram_frequency[keymap[l0], keymap[l1]] = float(f)
 
     def initialize_trigrams():
         with open('freq-trigram.txt') as fh:
             for line in fh:
-                (l0, l1, l2), f = line.strip().split('\t')
+                (l0, l1, l2), f = line.replace('\n', '').split('\t')
                 trigram_frequency[keymap[l0], keymap[l1], keymap[l2]] = float(f)
 
     def initialize_roll_map():
@@ -379,7 +380,7 @@ class Keyboard:
         for i in range(100):
             max_idle = max_accept = (1 + i) * 100
 
-            threshold = curr.penalty * 1.02
+            threshold = curr.penalty * 1.04
             accept = 0
             idle = 0
             while idle < max_idle:
