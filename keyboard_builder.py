@@ -3,32 +3,32 @@ import random
 import numpy as np
 
 qwerty = [
-    'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p',
-    'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ':',
-    'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/',
-    '?', ' ',
-]
-
-ytrewq = [
-    'p', 'o', 'i', 'u', 'y', 't', 'r', 'e', 'w', 'q',
-    ':', 'l', 'k', 'j', 'h', 'g', 'f', 'd', 's', 'a',
-    '/', '.', ',', 'm', 'n', 'b', 'v', 'c', 'x', 'z',
-    '?', ' ',
+    ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
+    ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ':'],
+    ['z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/'],
+    ['?', ' '],
 ]
 
 custom1 = [
-    'x', 'p', 'u', 'o', 'q', 'f', 'l', 'r', 'd', 'y',
-    'k', 'i', 'e', 'a', 'b', 'm', 'n', 't', 's', 'c',
-    'z', '.', '.', '.', '.', 'v', 'h', 'w', 'g', 'j',
-    '?', ' '
+    ['x', 'p', 'u', 'o', 'q', 'f', 'l', 'r', 'd', 'y'],
+    ['k', 'i', 'e', 'a', 'b', 'm', 'n', 't', 's', 'c'],
+    ['z', ';', '/', '.', ',', 'v', 'h', 'w', 'g', 'j'],
+    ['?', ' '],
 ]
 
 custom2 = [
-    'x', 'm', 'g', 'b', 'z', 'q', 'f', 'u', 'o', 'y',
-    'r', 'l', 's', 't', 'p', 'k', 'n', 'e', 'a', 'i',
-    'c', 'j', 'w', 'd', 'v', ':', 'h', ',', '.', '/',
-    '?', ' '
+    ['x', 'l', 'm', 'p', 'z', 'y', 'f', 'o', 'u', ';'],
+    ['c', 'r', 's', 't', 'k', 'j', 'n', 'a', 'e', 'i'],
+    ['v', 'w', 'g', 'd', 'b', 'q', 'h', ',', '.', '/'],
+    ['?', ' '],
 ]
+
+keys = [y for x in qwerty for y in x]
+syek = [y for x in qwerty for y in reversed(x)]
+
+keymap = {k: i for i, k in enumerate(keys)}
+fixed_keys = set(keymap[k] for k in ' ?,./')
+fixed_hand = set(keymap[k] for k in 'zxcv')
 
 hand = [
     0, 0, 0, 0, 0, 1, 1, 1, 1, 1,
@@ -51,40 +51,37 @@ rows = [
     3, 3,
 ]
 
-keymap = {k: i for i, k in enumerate(qwerty)}
-
-fixed_keys = set(keymap[k] for k in ' ?')
-
 effort = np.array([
-    5.0, 1.1, 1.0, 2.0, 3.0, 0, 0, 0, 0, 0,
-    0.8, 0.7, 0.6, 0.5, 1.8, 0, 0, 0, 0, 0,
-    1.6, 2.2, 2.0, 1.0, 3.0, 0, 0, 0, 0, 0,
+    4.0, 1.1, 1.0, 2.0, 3.0, 0, 0, 0, 0, 0,
+    1.5, 0.7, 0.6, 0.5, 1.8, 0, 0, 0, 0, 0,
+    2.5, 2.2, 2.0, 0.9, 3.0, 0, 0, 0, 0, 0,
     0.0, 0.0,
 ], dtype=float)
 
 # effort = np.array([
 #     9.9, 1.0, 1.0, 1.0, 5.0, 0, 0, 0, 0, 0,
-#     1.0, 0.6, 0.5, 0.4, 1.5, 0, 0, 0, 0, 0,
-#     2.5, 2.0, 5.0, 1.5, 7.0, 0, 0, 0, 0, 0,
-#     0, 0
+#     2.0, 1.0, 1.0, 1.0, 1.5, 0, 0, 0, 0, 0,
+#     7.0, 2.0, 5.0, 1.0, 7.0, 0, 0, 0, 0, 0,
+#     0.5, 0.5
 # ], dtype=float)
 
 # effort = np.array([
-#     3.0, 2.4, 2.0, 2.2, 3.2, 3.2, 2.0, 2.0, 2.4, 3.0,
-#     1.6, 1.3, 1.1, 1.0, 2.9, 2.9, 1.1, 1.1, 1.3, 1.6,
-#     3.2, 2.6, 2.4, 1.6, 3.0, 3.0, 1.6, 2.4, 2.6, 3.2,
+#     4.0, 2.0, 2.0, 3.0, 4.0, 0, 0, 0, 0, 0,
+#     1.5, 1.0, 1.0, 1.0, 3.0, 0, 0, 0, 0, 0,
+#     4.0, 4.0, 3.0, 2.0, 5.0, 0, 0, 0, 0, 0,
+#     0, 0
 # ], dtype=float)
 
 
-digram_effort = np.zeros((len(qwerty), len(qwerty)), dtype=float)
-trigram_effort = np.zeros((len(qwerty), len(qwerty), len(qwerty)), dtype=float)
+digram_effort = np.zeros((len(keys), len(keys)), dtype=float)
+trigram_effort = np.zeros((len(keys), len(keys), len(keys)), dtype=float)
 
 a = 0.3
 b = 0.4
 c = 0.6
 d = 1.0
-e = 1.5
-f = 2.0
+e = 2.0
+f = 3.0
 
 m = 2.0
 n = 3.0
@@ -100,7 +97,7 @@ roll_map = np.array([
         z, z,
     ], [  # w
         0, m, a, a, a, z, z, z, z, z,
-        c, n, c, a, b, z, z, z, z, z,
+        d, n, c, a, b, z, z, z, z, z,
         f, o, f, c, d, z, z, z, z, z,
         z, z,
     ], [  # e
@@ -256,9 +253,10 @@ roll_map = np.array([
     ]
 ], dtype=float)
 
-letter_frequency: np.ndarray = np.zeros(len(qwerty), dtype=float)
-digram_frequency: np.ndarray = np.zeros((len(qwerty), len(qwerty)), dtype=float)
-trigram_frequency: np.ndarray = np.zeros((len(qwerty), len(qwerty), len(qwerty)), dtype=float)
+letter_frequency: np.ndarray = np.zeros(len(keys), dtype=float)
+digram_frequency: np.ndarray = np.zeros((len(keys), len(keys)), dtype=float)
+trigram_frequency: np.ndarray = np.zeros((len(keys), len(keys), len(keys)), dtype=float)
+
 
 def initialize():
     def initialize_letters():
@@ -280,47 +278,42 @@ def initialize():
                 trigram_frequency[keymap[l0], keymap[l1], keymap[l2]] = float(f)
 
     def initialize_roll_map():
-        for i0, k0 in enumerate(qwerty):
-            for i1, k1 in enumerate(qwerty):
+        for i0, k0 in enumerate(keys):
+            for i1, k1 in enumerate(keys):
                 if i1 < i0:
                     assert roll_map[i0][i1] == 0
                     roll_map[i0][i1] = roll_map[i1][i0]
 
-        for i0, k0 in enumerate(qwerty):
-            mirror_i0 = ytrewq.index(k0)
+        for i0, k0 in enumerate(keys):
+            mirror_i0 = syek.index(k0)
             if hand[i0] == 0:
                 effort[mirror_i0] = effort[i0]
 
-                for i1, k1 in enumerate(qwerty):
-                    mirror_i1 = ytrewq.index(k1)
+                for i1, k1 in enumerate(keys):
+                    mirror_i1 = syek.index(k1)
 
                     if hand[i1] == 0:
                         roll_map[mirror_i0][mirror_i1] = roll_map[i0][i1]
 
-        assert roll_map[keymap['p'], keymap['k']] == \
-               roll_map[keymap['q'], keymap['d']] == \
-               roll_map[keymap['k'], keymap['p']] == \
-               roll_map[keymap['d'], keymap['q']]
-
-        # # favor inward rolls slightly
-        # for i0 in range(len(qwerty)):
-        #     for i1 in range(len(qwerty)):
-        #         if hand[i0] == hand[i1] and fingers[i0] < fingers[i1]:
-        #             roll_map[i0][i1] *= 0.75
-
+        # favor inward rolls slightly
         for i0 in range(len(qwerty)):
             for i1 in range(len(qwerty)):
+                if hand[i0] == hand[i1] and fingers[i0] < fingers[i1]:
+                    roll_map[i0][i1] *= 0.75
+
+        for i0 in range(len(keys)):
+            for i1 in range(len(keys)):
                 digram_effort[i0][i1] = roll_map[i0][i1] * (effort[i0] + effort[i1])
 
     def initialize_tri_roll_map():
 
-        for i0 in range(len(qwerty)):
-            for i1 in range(len(qwerty)):
-                for i2 in range(len(qwerty)):
+        for i0 in range(len(keys)):
+            for i1 in range(len(keys)):
+                for i2 in range(len(keys)):
 
                     tri_effort = digram_effort[i0, i1] + digram_effort[i1, i2] + 0.5 * digram_effort[i0, i2]
 
-                    # hand pingpong good case
+                    # everything same hand: could be really good roll or really awkward
                     if hand[i0] == hand[i1] == hand[i2]:
                         finger0 = fingers[i0]
                         finger1 = fingers[i1]
@@ -329,10 +322,12 @@ def initialize():
                         row1 = rows[i1]
                         row2 = rows[i2]
 
-                        nice_horizontal_roll = (finger0 >= finger1 >= finger2) or (finger0 <= finger1 <= finger2)
-                        nice_vertical_roll = (row0 <= row1 <= row2) or (row0 >= row1 >= row2)
-                        if not nice_horizontal_roll or not nice_vertical_roll:
-                            tri_effort *= 2
+                        nice_horizontal_roll = (finger0 > finger1 > finger2) or (finger0 < finger1 < finger2)
+                        nice_vertical_roll = (row2 >= row1 >= row0 >= row2 - 1) or (row2 <= row1 <= row0 <= row2 + 1)
+                        if not nice_horizontal_roll:
+                            tri_effort *= 1.5
+                        if not nice_vertical_roll:
+                            tri_effort *= 1.5
 
                     trigram_effort[i0, i1, i2] = tri_effort
 
@@ -349,7 +344,7 @@ class Keyboard:
             self.keyboard = other.keyboard.copy()
             self.penalty = other.penalty
         else:
-            self.keyboard = np.array(range(len(qwerty)), dtype=int)
+            self.keyboard = np.array(range(len(keys)), dtype=int)
             # np.random.shuffle(self.keyboard)
 
             changed = True
@@ -375,9 +370,16 @@ class Keyboard:
                       if k not in fixed_keys]
 
         i0 = random.choice(candidates)
-        candidates = [i1 for i1, k in enumerate(self.keyboard)
-                      if k not in fixed_keys
-                      if i1 != i0]
+        if self.keyboard[i0] in fixed_hand:
+            candidates = [i1 for i1, k in enumerate(self.keyboard)
+                          if k not in fixed_keys
+                          if i1 != i0
+                          if hand[i0] == hand[i1]]
+        else:
+            candidates = [i1 for i1, k in enumerate(self.keyboard)
+                          if i1 != i0
+                          if k not in fixed_keys
+                          if k not in fixed_hand]
 
         i1 = random.choice(candidates)
         return i0, i1
@@ -386,10 +388,11 @@ class Keyboard:
         # letter
         kb = self.keyboard
 
-        self.penalty = 0 \
-                       + np.sum(letter_frequency[kb] * effort) \
-                       + np.sum(digram_effort * digram_frequency[kb][:, kb]) \
-                       + np.sum(trigram_effort * trigram_frequency[kb][:, kb][:, :, kb])
+        self.penalty = np.sum(trigram_effort * trigram_frequency[kb][:, kb][:, :, kb])
+        # self.penalty = 0 \
+        #                + np.sum(letter_frequency[kb] * effort) \
+        #                + np.sum(digram_effort * digram_frequency[kb][:, kb]) \
+        #                + np.sum(trigram_effort * trigram_frequency[kb][:, kb][:, :, kb])
 
     def score_and_apply_neighbor(self, i1: int, i2: int):
         self.apply_neighbor(i1, i2)
@@ -408,7 +411,7 @@ class Keyboard:
         for i in range(100):
             max_idle = max_accept = (1 + i) * 100
 
-            threshold = curr.penalty * 1.04
+            threshold = curr.penalty * 1.05
             accept = 0
             idle = 0
             while idle < max_idle:
@@ -443,19 +446,24 @@ class Keyboard:
     def __str__(self):
         result = []
         for k in self.keyboard[:10]:
-            result.append(qwerty[k])
+            result.append(keys[k])
             result.append('   ')
         result.pop()
         result.append('\n')
         for k in self.keyboard[10:20]:
-            result.append(qwerty[k])
+            result.append(keys[k])
             result.append('   ')
         result.pop()
         result.append('\n')
         for k in self.keyboard[20:30]:
-            result.append(qwerty[k])
+            result.append(keys[k])
             result.append('   ')
         result.pop()
+        result.append('\n')
+        result.append('    ' * 4)
+        for k in self.keyboard[30:]:
+            result.append(keys[k])
+            result.append('   ')
         return ''.join(result)
 
 

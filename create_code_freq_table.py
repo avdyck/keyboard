@@ -1,5 +1,6 @@
 import os
 import string
+from collections import defaultdict
 
 path = 'C:\\Users\\AlexanderVanDyck\\IdeaProjects\\conundra-optitour'
 
@@ -10,6 +11,12 @@ trigrams = {}
 
 javafiles = []
 
+english_most_frequent = 0
+with open('english.txt', 'r') as fh:
+    for line in fh:
+        _, f = line.strip().split('\t')
+        english_most_frequent = max(english_most_frequent, int(f))
+
 for root, subdirs, files in os.walk(path):
     for file in files:
         if file.endswith('.java'):
@@ -19,6 +26,7 @@ for _ in range(len(javafiles)):
     print('.', end='')
 print()
 
+words = defaultdict(int)
 for i, file in enumerate(javafiles):
     print('.', end='')
     with open(file, 'r', encoding='utf-8') as fh:
@@ -27,38 +35,16 @@ for i, file in enumerate(javafiles):
             if read.startswith('package') or read.startswith('import'):
                 continue
 
-            for a, b in zip(read, read[1:]):
-                bi = a + b
-                if not all(x in accepted_letters for x in bi):
-                    continue
-                if bi not in bigrams:
-                    bigrams[bi] = 1
-                else:
-                    bigrams[bi] += 1
-
-            for a, b, c in zip(read, read[1:], read[2:]):
-                tri = a + b + c
-                if not all(x in accepted_letters for x in tri):
-                    continue
-                if tri not in trigrams:
-                    trigrams[tri] = 1
-                else:
-                    trigrams[tri] += 1
+            read = ''.join(' ' if l not in accepted_letters else l for l in read)
+            for w in read.split(' '):
+                if w:
+                    words[w] += 1
 print()
 
-bigrams_list = [(f, w) for w, f in bigrams.items()]
-bigrams_list.sort(reverse=True)
+result = [(f, w) for w, f in words.items()]
+result.sort(reverse=True)
+most_frequent = result[0][0]
 
-trigrams_list = [(f, w) for w, f in trigrams.items()]
-trigrams_list.sort(reverse=True)
-
-print(bigrams_list)
-print(trigrams_list)
-
-with open('code-bi.txt', 'w') as fh:
-    for f, bi in bigrams_list:
-        fh.write(f'{bi}\t{f}\n')
-
-with open('code-tri.txt', 'w') as fh:
-    for f, tri in trigrams_list:
-        fh.write(f'{tri}\t{f}\n')
+with open('code.txt', 'w') as fh:
+    for f, w in result:
+        fh.write(f'{w}\t{(f * english_most_frequent / most_frequent)}\n')
