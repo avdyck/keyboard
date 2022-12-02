@@ -1,3 +1,4 @@
+import math
 import random
 
 import numpy as np
@@ -17,45 +18,45 @@ custom1 = [
 ]
 
 custom2 = [
-    ['x', 'l', 'm', 'p', 'z', 'y', 'f', 'o', 'u', ';'],
-    ['c', 'r', 's', 't', 'k', 'j', 'n', 'a', 'e', 'i'],
-    ['v', 'w', 'g', 'd', 'b', 'q', 'h', ',', '.', '/'],
+    ['q', 'w', 'e', 'r', 't', 'h', 'j', 'k', 'l', 'p'],
+    ['a', 's', 'd', 'f', 'g', 'y', 'u', 'i', 'o', ':'],
+    ['z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/'],
     ['?', ' '],
 ]
 
-keys = [y for x in qwerty for y in x]
-syek = [y for x in qwerty for y in reversed(x)]
+custom3 = [
+    ['x', 'l', 'h', 'm', 'z', 'q', 'f', 'u', 'o', 'y'],
+    ['c', 's', 'r', 't', 'g', 'p', 'n', 'e', 'a', 'i'],
+    ['b', 'j', 'k', 'w', 'v', ';', 'd', ',', '.', '/'],
+    ['?', ' '],
+]
+
+custom4 = [
+    ['z', 'y', 'u', 'o', 'q', 'f', 'k', 'h', 'l', 'j'],
+    ['v', 'i', 'e', 'a', ',', 'm', 't', 'g', 'r', 'p'],
+    ['c', ';', '/', '.', 'x', 's', 'w', 'n', 'b', 'd'],
+    ['?', ' '],
+]
+
+custom5 = [
+    ['x', 'd', 'h', 'k', 'z', 'q', 'f', 'u', 'o', 'y'],
+    ['c', 's', 't', 'r', 'g', 'p', 'n', 'e', 'a', 'i'],
+    ['b', 'j', 'm', 'w', 'v', ';', 'l', ',', '.', '/'],
+    ['?', ' '],
+]
+
+keys = [y for x in custom4 for y in x]
+syek = [y for x in custom4 for y in reversed(x)]
 
 keymap = {k: i for i, k in enumerate(keys)}
-fixed_keys = set(keymap[k] for k in ' ?,./')
-fixed_hand = set(keymap[k] for k in 'zxcv')
-
-hand = [
-    0, 0, 0, 0, 0, 1, 1, 1, 1, 1,
-    0, 0, 0, 0, 0, 1, 1, 1, 1, 1,
-    0, 0, 0, 0, 0, 1, 1, 1, 1, 1,
-    2, 2,
-]
-
-fingers = [
-    0, 1, 2, 3, 3, 3, 3, 2, 1, 0,
-    0, 1, 2, 3, 3, 3, 3, 2, 1, 0,
-    0, 1, 2, 3, 3, 3, 3, 2, 1, 0,
-    8, 8,
-]
-
-rows = [
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-    2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-    3, 3,
-]
+fixed_keys = set(keymap[k] for k in '?')
+fixed_hand = set(keymap[k] for k in '')
 
 effort = np.array([
-    4.0, 1.1, 1.0, 2.0, 3.0, 0, 0, 0, 0, 0,
-    1.5, 0.7, 0.6, 0.5, 1.8, 0, 0, 0, 0, 0,
-    2.5, 2.2, 2.0, 0.9, 3.0, 0, 0, 0, 0, 0,
-    0.0, 0.0,
+    3.0, 1.0, 0.9, 1.3, 2.3, 0, 0, 0, 0, 0,
+    1.3, 1.0, 0.9, 0.8, 1.4, 0, 0, 0, 0, 0,
+    1.7, 1.6, 1.5, 1.1, 2.4, 0, 0, 0, 0, 0,
+    0.5, 0.5,
 ], dtype=float)
 
 # effort = np.array([
@@ -77,43 +78,43 @@ digram_effort = np.zeros((len(keys), len(keys)), dtype=float)
 trigram_effort = np.zeros((len(keys), len(keys), len(keys)), dtype=float)
 
 a = 0.3
-b = 0.4
-c = 0.6
-d = 1.0
-e = 2.0
-f = 3.0
+b = 0.5
+c = 0.7
+d = 1.2
+e = 1.5
+f = 2.0
 
-m = 2.0
-n = 3.0
-o = 4.0
+m = 3.0
+n = 4.0
+o = 5.0
 p = o
 
 z = 0.5
 roll_map = np.array([
     [  # q
-        m, a, a, a, a, z, z, z, z, z,
-        n, d, d, c, b, z, z, z, z, z,
-        o, f, f, d, d, z, z, z, z, z,
+        m, c, c, a, b, z, z, z, z, z,
+        n, e, e, b, c, z, z, z, z, z,
+        o, f, f, e, f, z, z, z, z, z,
         z, z,
     ], [  # w
-        0, m, a, a, a, z, z, z, z, z,
-        d, n, c, a, b, z, z, z, z, z,
-        f, o, f, c, d, z, z, z, z, z,
+        0, m, a, b, c, z, z, z, z, z,
+        c, n, d, a, b, z, z, z, z, z,
+        d, o, e, c, d, z, z, z, z, z,
         z, z,
     ], [  # e
-        0, 0, m, a, b, z, z, z, z, z,
-        b, d, n, a, c, z, z, z, z, z,
-        d, f, o, c, d, z, z, z, z, z,
+        0, 0, m, b, c, z, z, z, z, z,
+        c, c, n, a, c, z, z, z, z, z,
+        d, f, o, d, e, z, z, z, z, z,
         z, z,
     ], [  # r
         0, 0, 0, m, n, z, z, z, z, z,
-        b, c, d, n, o, z, z, z, z, z,
-        c, d, e, o, p, z, z, z, z, z,
+        c, d, d, n, o, z, z, z, z, z,
+        d, e, e, o, p, z, z, z, z, z,
         z, z,
     ], [  # t
         0, 0, 0, 0, m, z, z, z, z, z,
-        b, c, c, o, n, z, z, z, z, z,
-        c, d, e, p, o, z, z, z, z, z,
+        c, d, d, o, n, z, z, z, z, z,
+        e, e, e, p, o, z, z, z, z, z,
         z, z,
     ], [  # y
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -142,28 +143,28 @@ roll_map = np.array([
         z, z,
     ], [  # a
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        m, a, a, a, a, z, z, z, z, z,
+        m, b, b, a, b, z, z, z, z, z,
         n, d, c, b, c, z, z, z, z, z,
         z, z,
     ], [  # s
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, m, a, a, c, z, z, z, z, z,
-        c, n, c, b, c, z, z, z, z, z,
+        0, m, a, b, c, z, z, z, z, z,
+        b, n, c, a, c, z, z, z, z, z,
         z, z,
     ], [  # d
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, m, a, c, z, z, z, z, z,
-        c, d, n, b, c, z, z, z, z, z,
+        0, 0, m, b, c, z, z, z, z, z,
+        c, c, n, a, d, z, z, z, z, z,
         z, z,
     ], [  # f
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, m, n, z, z, z, z, z,
-        b, c, d, n, o, z, z, z, z, z,
+        c, d, d, n, o, z, z, z, z, z,
         z, z,
     ], [  # g
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, m, z, z, z, z, z,
-        c, d, d, o, n, z, z, z, z, z,
+        c, d, e, o, n, z, z, z, z, z,
         z, z,
     ], [  # h
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -193,17 +194,17 @@ roll_map = np.array([
     ], [  # z
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        m, a, a, a, b, z, z, z, z, z,
+        m, b, b, a, b, z, z, z, z, z,
         z, z,
     ], [  # x
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, m, a, b, d, z, z, z, z, z,
+        0, m, a, b, c, z, z, z, z, z,
         z, z,
     ], [  # c
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, m, a, b, z, z, z, z, z,
+        0, 0, m, b, c, z, z, z, z, z,
         z, z,
     ], [  # v
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -257,6 +258,27 @@ letter_frequency: np.ndarray = np.zeros(len(keys), dtype=float)
 digram_frequency: np.ndarray = np.zeros((len(keys), len(keys)), dtype=float)
 trigram_frequency: np.ndarray = np.zeros((len(keys), len(keys), len(keys)), dtype=float)
 
+fingers = [
+    0, 1, 2, 3, 3, 3, 3, 2, 1, 0,
+    0, 1, 2, 3, 3, 3, 3, 2, 1, 0,
+    0, 1, 2, 3, 3, 3, 3, 2, 1, 0,
+    4, 4,
+]
+
+hand = [
+    0, 0, 0, 0, 0, 1, 1, 1, 1, 1,
+    0, 0, 0, 0, 0, 1, 1, 1, 1, 1,
+    0, 0, 0, 0, 0, 1, 1, 1, 1, 1,
+    2, 3,
+]
+
+rows = [
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+    2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+    3, 3,
+]
+
 
 def initialize():
     def initialize_letters():
@@ -296,8 +318,8 @@ def initialize():
                         roll_map[mirror_i0][mirror_i1] = roll_map[i0][i1]
 
         # favor inward rolls slightly
-        for i0 in range(len(qwerty)):
-            for i1 in range(len(qwerty)):
+        for i0 in range(len(keys)):
+            for i1 in range(len(keys)):
                 if hand[i0] == hand[i1] and fingers[i0] < fingers[i1]:
                     roll_map[i0][i1] *= 0.75
 
